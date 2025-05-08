@@ -12,6 +12,7 @@ authors = [
 license = { text = "MIT" }
 dependencies = [
     # Add your runtime dependencies here, e.g., "requests>=2.25.1"
+    "click>=8.1.8"
 ]
 keywords = ["disney", "lorcana"]
 classifiers = [
@@ -19,3 +20,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent"
 ]
+
+[project.scripts]
+inkcollector = "inkcollector.cli:hello"
