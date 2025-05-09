@@ -1,3 +1,4 @@
+import configparser
 import logging
 import os
 from importlib.metadata import version, PackageNotFoundError
@@ -11,11 +12,13 @@ except PackageNotFoundError:
     __version__ = "unknown"
 
 class InkCollector:
-    def __init__(self, name="inkcollector"):
+    def __init__(self, name="inkcollector", config_file="config.ini"):
         self.version = __version__
         self.name = name
         self.description = "Inkcollector is a CLI tool for collecting data about the disney lorcana trading card game."
-        
+        self.config_file = config_file
+        self.config = self.load_config()
+
     @property
     def logger(self):
         """
@@ -38,6 +41,21 @@ class InkCollector:
         """
         self.logger.log(level, message)
 
+    def load_config(self):
+        """
+        Loads the configuration from the config file.
+        
+        Returns:
+            configparser.ConfigParser: The loaded configuration.
+        """
+        config = configparser.ConfigParser()
+        if os.path.exists(self.config_file):
+            config.read(self.config_file)
+            self.log(f"Loaded configuration from {self.config_file}.", logging.INFO)
+        else:
+            self.log(f"Configuration file {self.config_file} not found. Using default settings.", logging.WARNING)
+        return config
+
     def file_output(self, data, filepath):
         """
         Save data to a file.
@@ -46,7 +64,7 @@ class InkCollector:
             data (str): The data to save.
             filepath (str): The path to the file where the data will be saved.
         """
-        data_dir = "data/"
+        data_dir = self.config.get("Directories", "Data", fallback="data")
 
         # Make the filepath friendly for the file system
         filepath = friendly_filepath(filepath)

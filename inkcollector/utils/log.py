@@ -35,11 +35,10 @@ LOGGING_CONFIG = {
     },
 }
 
-def setup_logger():
+def setup_logger(log_dir="logs"):
     """
     Sets up logging using the configuration dictionary.
     """
-    log_dir = "logs"
     # Create the logs directory if it doesn't exist
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
