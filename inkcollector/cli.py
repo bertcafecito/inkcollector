@@ -4,11 +4,15 @@ from inkcollector import __version__
 from inkcollector.lorcast import Lorcast
 from inkcollector.utils.output import output_json, output_csv
 
-@click.group()
+@click.group(invoke_without_command=True)
 @click.option("-v", "--version", is_flag=True, help="Show Inkcollector version.")
-def main(version):
+@click.pass_context
+def main(ctx, version):
     if version:
         click.echo(f"Inkcollector {__version__}")
+        ctx.exit()  # Exit after showing the version if no subcommand is provided
+    elif not ctx.invoked_subcommand:
+        click.echo("No command provided. Use --help for usage information.")
 
 @main.group(help="Collects data from the Lorecast API.")
 def lorcast():
