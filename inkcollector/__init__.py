@@ -3,7 +3,7 @@ import os
 from importlib.metadata import version, PackageNotFoundError
 
 from inkcollector.utils.log import setup_logger
-from inkcollector.utils.output import output_json, output_csv
+from inkcollector.utils.output import friendly_filepath, output_json, output_csv
 
 try:
     __version__ = version("inkcollector")
@@ -46,6 +46,14 @@ class InkCollector:
             data (str): The data to save.
             filepath (str): The path to the file where the data will be saved.
         """
+        data_dir = "data/"
+
+        # Make the filepath friendly for the file system
+        filepath = friendly_filepath(filepath)
+
+        # Join the data directory with the provided filepath
+        filepath = os.path.join(data_dir, filepath)
+
         # Check if the filepath contains subdirectories
         if os.path.dirname(filepath):
             # Create the directories if they do not exist

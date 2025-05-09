@@ -42,7 +42,7 @@ def sets(filename):
     
     if file:
         click.echo(f"File saved successfully.")
-        return None
+        return sets
 
     click.echo("Error Occurred while saving the file.")
 
@@ -77,34 +77,17 @@ def cards(setid, filename):
 
 @lorcast.command(help="Collects everything.")
 @click.option("-o", "--output", type=click.Choice(["JSON", "CSV"], case_sensitive=True), is_flag=False, help="Output format for the collected data.")
-def all(output):
+@click.pass_context
+def all(ctx, output):
     click.echo('Collecting everthing')
-    click.echo("Collecting sets")
-    lorcast=Lorcast()
-    sets=lorcast.get_sets()
-    cards=list()
 
-    if sets:
-        click.echo(f"Found {len(sets)} sets.")
+    # Invoke the 'sets' command
+    sets_data = ctx.invoke(sets, filename="sets.json")
 
-    for set in sets:
-        setid = set["id"]
-        setname = set["name"]
-        click.echo(f"Collecting cards from set id of {setid}")
-        data=lorcast.get_cards(setid)
+    # Invoke the 'cards' command for each set
+    for set_data in sets_data:
+        set_id = set_data["id"]
+        set_name = set_data["name"]
+        ctx.invoke(cards, setid=set_id, filename=f"{set_name}.json")
 
-        if data:
-            click.echo(f"Found {len(cards)} cards.")
-            cards.append(data)
-
-    if output and output == "JSON":
-        click.echo('Outputting in JSON format')
-        output_json(sets, "sets.json")
-        output_json(cards, "cards.json")
-    
-    if output and output == "CSV":
-        click.echo('Outputting in CSV format')
-        output_csv(sets, "sets.csv")
-        output_csv(cards, "cards.csv")
-    
     
