@@ -1,6 +1,14 @@
+import logging
 import requests
 
-class Lorcast:
+from inkcollector import InkCollector
+
+class Lorcast(InkCollector):
+    """
+    A class to interact with the Lorcast API for collecting data on the Lorcana Trading Card Game.
+    
+    This class provides methods to retrieve card sets and cards from the API.
+    """
     def __init__(self):
         self.name = "lorcast"
         self.description = "Collects data from the Lorecast API."
@@ -9,6 +17,7 @@ class Lorcast:
         self.api_current_version = "v0"
         self.api_rate_limit = 5 # delay per request in seconds
         self.api_url = f"{self.api_base_url}/{self.api_current_version}"
+        super().__init__(name=self.name)
 
     def get_sets(self):
         """
@@ -20,25 +29,24 @@ class Lorcast:
         api_endpoint = f"{self.api_url}/sets"
 
         try:
-            print(f"Fetching sets form Lorcast API")
+            self.log("Fetching sets from Lorcast API", level=logging.INFO)
             response = requests.get(api_endpoint)
             response.raise_for_status()  # Raise an error for bad responses
         except requests.exceptions.RequestException as e:
-            # Print the error message
-            print(f"Error fetching data from API: {str(e)}")
+            self.log(f"Error fetching data from API: {str(e)}", level=logging.ERROR)
             return None
         
         if response.status_code == 200:
             data = response.json()
+            sets = data.get("results", None)
         else:
-            print(f"Response Error: {response.status_code} - {response.text}")
-
-        sets = data.get("results", None)
+            self.log(f"Response Error: {response.status_code} - {response.text}", level=logging.ERROR)
 
         if not sets:
-            print("No sets found.")
+            self.log("No sets found.", level=logging.WARNING)
+            return None
         
-        print(f"Found {len(sets)} sets.")
+        self.log(f"Found {len(sets)} sets.", level=logging.INFO)
         return sets
     
     def get_cards(self, set_id):
@@ -54,20 +62,19 @@ class Lorcast:
         api_endpoint = f"{self.api_url}/sets/{set_id}/cards"
 
         try:
-            print(f"Fetching cards from Lorcast API for set {set_id}")
+            self.log(f"Fetching cards from Lorcast API for set {set_id}", level=logging.INFO)
             response = requests.get(api_endpoint)
             response.raise_for_status()  # Raise an error for bad responses
         except requests.exceptions.RequestException as e:
-            # Print the error message
-            print(f"Error fetching data from API: {str(e)}")
+            self.log(f"Error fetching data from API: {str(e)}", level=logging.ERROR)
             return None
         
         if response.status_code == 200:
             cards = response.json()
         else:
-            print(f"Response Error: {response.status_code} - {response.text}")
+            self.log(f"Response Error: {response.status_code} - {response.text}", level=logging.ERROR)
         
-        print(f"Found {len(cards)} cards.")
+        self.log(f"Found {len(cards)} cards.", level=logging.INFO)
         return cards
 
         
