@@ -48,22 +48,32 @@ def sets(filename):
 
 @lorcast.command(help="Collects a detailed information about a specific Lorcana card set by using either the set's code or its unique identifier (ID).")
 @click.option("--setid", type=str, help="Provide a set's code or its unique identifier (ID).")
-@click.option("-o", "--output", type=click.Choice(["JSON", "CSV"], case_sensitive=True), is_flag=False, help="Output format for the collected data.")
-def cards(setid, output):
+@click.option("-fn", "--filename", type=str, is_flag=False, help="Provides a filename to save the collected data.")
+def cards(setid, filename):
     click.echo(f"Collecting cards from set id of {setid}")
     lorcast=Lorcast()
     cards=lorcast.get_cards(setid)
 
+    # Check if the cards list is empty
+    if not cards:
+        click.echo("No cards found.")
+        return None
+
+    # Check if the cards list is not empty
     if cards:
         click.echo(f"Found {len(cards)} cards.")
 
-    if output and output == "JSON":
-        click.echo('Outputting in JSON format')
-        output_json(cards, "cards.json")
+    file = lorcast.file_output(cards, filename)
+    # Check if the file was saved successfully
+    if not file:
+        click.echo("Failed to save the file.")
+        return None
     
-    if output and output == "CSV":
-        click.echo('Outputting in CSV format')
-        output_csv(cards, "cards.csv")
+    if file:
+        click.echo(f"File saved successfully.")
+        return None
+    
+    click.echo("Error Occurred while saving the file.")
 
 @lorcast.command(help="Collects everything.")
 @click.option("-o", "--output", type=click.Choice(["JSON", "CSV"], case_sensitive=True), is_flag=False, help="Output format for the collected data.")
