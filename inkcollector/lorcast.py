@@ -40,6 +40,35 @@ class Lorcast:
         
         print(f"Found {len(sets)} sets.")
         return sets
+    
+    def get_cards(self, set_id):
+        """
+        Retrieves a list of cards for a specific set in the Lorcana Trading Card Game.
+
+        Args:
+            set_id (str): The ID of the set to retrieve cards from.
+
+        Returns:
+            list: A list of cards, each represented as a dictionary with card details.
+        """
+        api_endpoint = f"{self.api_url}/sets/{set_id}/cards"
+
+        try:
+            print(f"Fetching cards from Lorcast API for set {set_id}")
+            response = requests.get(api_endpoint)
+            response.raise_for_status()  # Raise an error for bad responses
+        except requests.exceptions.RequestException as e:
+            # Print the error message
+            print(f"Error fetching data from API: {str(e)}")
+            return None
+        
+        if response.status_code == 200:
+            cards = response.json()
+        else:
+            print(f"Response Error: {response.status_code} - {response.text}")
+        
+        print(f"Found {len(cards)} cards.")
+        return cards
 
         
     
