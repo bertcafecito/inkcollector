@@ -24,3 +24,6 @@ classifiers = [
 
 [project.scripts]
 inkcollector = "inkcollector.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
