@@ -77,14 +77,13 @@ def cards(setid, filename):
 
 @lorcast.command(help="Collects everything.")
 @click.option("-of", "--outputformat", required=True, type=click.Choice(["JSON", "CSV"], case_sensitive=False), is_flag=False, help="Output format for the collected data.")
-@click.option("-fd", "--filedir", default=".", type=str, is_flag=False, help="Provides a file directory to save the collected data.")
 @click.pass_context
-def all(ctx, outputformat, filedir):
+def all(ctx, outputformat):
     click.echo('Collecting everthing')
 
     if outputformat:
         file_ext = outputformat.lower()
-        sets_filename = f"{filedir}/sets.{file_ext}"
+        sets_filename = f"lorcast/sets.{file_ext}"
 
         # Invoke the 'sets' command
         sets_data = ctx.invoke(sets, filename=sets_filename)
@@ -93,7 +92,7 @@ def all(ctx, outputformat, filedir):
         for set_data in sets_data:
             set_id = set_data["id"]
             set_name = set_data["name"]
-            cards_filename = f"{filedir}/sets/{set_name}.{file_ext}"
+            cards_filename = f"lorcast/sets/{set_name}.{file_ext}"
             ctx.invoke(cards, setid=set_id, filename=cards_filename)
 
     
