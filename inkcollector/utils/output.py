@@ -3,7 +3,7 @@ import json
 
 def friendly_filepath(filepath):
     """
-    Format the output file path to be file-system friendly.
+    Format the output file path to be file-system friendly including the subdirectories
     
     Parameters:
     - filepath: The file path to format.
@@ -11,16 +11,27 @@ def friendly_filepath(filepath):
     Returns:
     - str: The formatted file path.
     """
+    print(f"Original filepath: {filepath}")
+
+    # Split the filepath into filename and file directory
+    filename = filepath.split("/")[-1]
+    filedir = "/".join(filepath.split("/")[:-1])
+
     # Remove any leading or trailing whitespace
-    filepath = filepath.strip()
-
-    # Replace spaces with underscores
-    filepath = filepath.replace(" ", "_")
-
-    # Remove any special characters that are not allowed in file names
-    # You can customize this regex to allow or disallow specific characters
-    filepath = ''.join(e for e in filepath if e.isalnum() or e in ['_', '-', '.'])
+    filename = filename.strip()
     
+    # Replace spaces with underscores
+    filename = filename.replace(" ", "_")
+
+    # Ensure the filename is file-system friendly
+    filepath = ''.join(e for e in filename if e.isalnum() or e in ['_', '-', '.'])
+
+    # Ensure the file directory is file-system friendly
+    filedir = ''.join(e for e in filedir if e.isalnum() or e in ['\\','/'])
+
+    # Join the filename and file directory
+    filepath = f"{filedir}/{filename}"
+
     return filepath.lower()
 
 def output_json(data, filename):

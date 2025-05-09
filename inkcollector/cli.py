@@ -76,14 +76,15 @@ def cards(setid, filename):
     click.echo("Error Occurred while saving the file.")
 
 @lorcast.command(help="Collects everything.")
-@click.option("-o", "--output", required=True, type=click.Choice(["JSON", "CSV"], case_sensitive=False), is_flag=False, help="Output format for the collected data.")
+@click.option("-of", "--outputformat", required=True, type=click.Choice(["JSON", "CSV"], case_sensitive=False), is_flag=False, help="Output format for the collected data.")
+@click.option("-fd", "--filedir", default=".", type=str, is_flag=False, help="Provides a file directory to save the collected data.")
 @click.pass_context
-def all(ctx, output):
+def all(ctx, outputformat, filedir):
     click.echo('Collecting everthing')
 
-    if output:
-        file_ext = output.lower()
-        sets_filename = f"sets.{file_ext}"
+    if outputformat:
+        file_ext = outputformat.lower()
+        sets_filename = f"{filedir}/sets.{file_ext}"
 
         # Invoke the 'sets' command
         sets_data = ctx.invoke(sets, filename=sets_filename)
@@ -92,7 +93,7 @@ def all(ctx, output):
         for set_data in sets_data:
             set_id = set_data["id"]
             set_name = set_data["name"]
-            cards_filename = f"{set_name}.{file_ext}"
+            cards_filename = f"{filedir}/sets/{set_name}.{file_ext}"
             ctx.invoke(cards, setid=set_id, filename=cards_filename)
 
     
