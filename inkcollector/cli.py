@@ -1,9 +1,9 @@
 import click
 
+from inkcollector import __version__
+
 @click.command()
-@click.option("--count", default=1, help="Number of greetings.")
-@click.option("--name", prompt="Your name", help="The person to greet.")
-def hello(count, name):
-    """Simple program that greets NAME for a total of COUNT times."""
-    for _ in range(count):
-        click.echo(f"Hello, {name}!")
+@click.option("-v", "--version", is_flag=True, help="Show Inkcollector version.")
+def main(version):
+    if version:
+        click.echo(f"Inkcollector {__version__}")

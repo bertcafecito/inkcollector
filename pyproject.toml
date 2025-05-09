@@ -22,4 +22,4 @@ classifiers = [
 ]
 
 [project.scripts]
-inkcollector = "inkcollector.cli:hello"
+inkcollector = "inkcollector.cli:main"

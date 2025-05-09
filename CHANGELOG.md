@@ -12,4 +12,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changelog.
 - VSCode Python Devcontainer configuration.
 - CodeQL Analysis workflow.
+- Show Inkcollector version via CLI.
 
