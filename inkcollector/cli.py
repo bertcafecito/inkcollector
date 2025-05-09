@@ -76,7 +76,7 @@ def cards(setid, filename):
     click.echo("Error Occurred while saving the file.")
 
 @lorcast.command(help="Collects everything.")
-@click.option("-of", "--outputformat", required=True, type=click.Choice(["JSON", "CSV"], case_sensitive=False), is_flag=False, help="Output format for the collected data.")
+@click.option("-of", "--outputformat", required=True, type=click.Choice(["JSON"], case_sensitive=False), is_flag=False, help="Output format for the collected data.")
 @click.pass_context
 def all(ctx, outputformat):
     click.echo('Collecting everthing')
