@@ -11,8 +11,6 @@ def friendly_filepath(filepath):
     Returns:
     - str: The formatted file path.
     """
-    print(f"Original filepath: {filepath}")
-
     # Split the filepath into filename and file directory
     filename = filepath.split("/")[-1]
     filedir = "/".join(filepath.split("/")[:-1])
