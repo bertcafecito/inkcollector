@@ -12,7 +12,8 @@ authors = [
 license = { text = "MIT" }
 dependencies = [
     # Add your runtime dependencies here, e.g., "requests>=2.25.1"
-    "click>=8.1.8"
+    "click>=8.1.8",
+    "requests>=2.32.3"
 ]
 keywords = ["disney", "lorcana"]
 classifiers = [

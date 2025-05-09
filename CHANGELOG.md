@@ -13,4 +13,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - VSCode Python Devcontainer configuration.
 - CodeQL Analysis workflow.
 - Show Inkcollector version via CLI.
+- Lorcast Set Command with JSON and CSV output formats.
 
