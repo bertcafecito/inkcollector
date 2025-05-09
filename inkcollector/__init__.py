@@ -1,7 +1,9 @@
 import logging
+import os
 from importlib.metadata import version, PackageNotFoundError
 
 from inkcollector.utils.log import setup_logger
+from inkcollector.utils.output import output_json, output_csv
 
 try:
     __version__ = version("inkcollector")
@@ -35,3 +37,40 @@ class InkCollector:
             level (int): The logging level. Default is logging.INFO.
         """
         self.logger.log(level, message)
+
+    def file_output(self, data, filepath):
+        """
+        Save data to a file.
+        
+        Args:
+            data (str): The data to save.
+            filepath (str): The path to the file where the data will be saved.
+        """
+        # Check if the filepath contains subdirectories
+        if os.path.dirname(filepath):
+            # Create the directories if they do not exist
+            if not os.path.exists(os.path.dirname(filepath)):
+                os.makedirs(os.path.dirname(filepath))
+                self.log("Created directories for the file path.", logging.INFO)
+
+        # Get the file extension from the filepath
+        file_extension = os.path.splitext(filepath)[1].lower()
+        supported_formats = ['.json', '.csv']
+        if file_extension not in supported_formats:
+            self.log(f"Unsupported file format: {file_extension}. Supported formats are: {supported_formats}", logging.ERROR)
+            return None
+        
+        if file_extension == '.json':
+            output_json(data, filepath)
+            self.log("Saved data to JSON file.", logging.INFO)
+            return True
+
+        if file_extension == '.csv':
+            output_csv(data, filepath)
+            self.log("Saved data to CSV file.", logging.INFO)
+            return True
+        
+        self.log("Unsupported file format. Supported formats are: .json, .csv", logging.ERROR)
+        return None
+
+        
