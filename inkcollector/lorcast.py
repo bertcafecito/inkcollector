@@ -1,5 +1,6 @@
 import logging
 import requests
+import time
 
 from inkcollector import InkCollector
 
@@ -31,6 +32,8 @@ class Lorcast(InkCollector):
         try:
             self.log("Fetching sets from Lorcast API", level=logging.INFO)
             response = requests.get(api_endpoint)
+            # Simulate rate limiting
+            time.sleep(self.api_rate_limit)
             response.raise_for_status()  # Raise an error for bad responses
         except requests.exceptions.RequestException as e:
             self.log(f"Error fetching data from API: {str(e)}", level=logging.ERROR)
@@ -65,6 +68,8 @@ class Lorcast(InkCollector):
             self.log(f"Fetching cards from Lorcast API for set {set_id}", level=logging.INFO)
             response = requests.get(api_endpoint)
             response.raise_for_status()  # Raise an error for bad responses
+            # Simulate rate limiting
+            time.sleep(self.api_rate_limit)
         except requests.exceptions.RequestException as e:
             self.log(f"Error fetching data from API: {str(e)}", level=logging.ERROR)
             return None
