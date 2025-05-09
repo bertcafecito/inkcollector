@@ -55,11 +55,32 @@ def cards(setid, output):
 @click.option("-o", "--output", type=click.Choice(["JSON", "CSV"], case_sensitive=True), is_flag=False, help="Output format for the collected data.")
 def all(output):
     click.echo('Collecting everthing')
+    click.echo("Collecting sets")
+    lorcast=Lorcast()
+    sets=lorcast.get_sets()
+    cards=list()
+
+    if sets:
+        click.echo(f"Found {len(sets)} sets.")
+
+    for set in sets:
+        setid = set["id"]
+        setname = set["name"]
+        click.echo(f"Collecting cards from set id of {setid}")
+        data=lorcast.get_cards(setid)
+
+        if data:
+            click.echo(f"Found {len(cards)} cards.")
+            cards.append(data)
 
     if output and output == "JSON":
         click.echo('Outputting in JSON format')
+        output_json(sets, "sets.json")
+        output_json(cards, "cards.json")
     
     if output and output == "CSV":
         click.echo('Outputting in CSV format')
+        output_csv(sets, "sets.csv")
+        output_csv(cards, "cards.csv")
     
     
