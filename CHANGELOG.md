@@ -17,4 +17,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Lorcast Cards Command with JSON and CSV output formats.
 - Lorcast All Command with JSON and CSV output formats.
 - Console Logging for better debugging.
+- File Logging for better debugging.
 
