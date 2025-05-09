@@ -1,6 +1,7 @@
 import logging
 from logging.handlers import RotatingFileHandler
 import logging.config
+import os
 
 LOGGING_CONFIG = {
     "version": 1,
@@ -34,9 +35,14 @@ LOGGING_CONFIG = {
     },
 }
 
-def setup_logger(name, level=logging.INFO, log_file="inkcollector.log"):
+def setup_logger():
     """
     Sets up logging using the configuration dictionary.
     """
+    log_dir = "logs"
+    # Create the logs directory if it doesn't exist
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
     logging.config.dictConfig(LOGGING_CONFIG)
     return logging.getLogger("inkcollector")

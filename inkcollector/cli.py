@@ -47,7 +47,7 @@ def sets(filename):
     click.echo("Error Occurred while saving the file.")
 
 @lorcast.command(help="Collects a detailed information about a specific Lorcana card set by using either the set's code or its unique identifier (ID).")
-@click.option("--setid", type=str, help="Provide a set's code or its unique identifier (ID).")
+@click.option("--setid", required=True, type=str, help="Provide a set's code or its unique identifier (ID).")
 @click.option("-fn", "--filename", type=str, is_flag=False, help="Provides a filename to save the collected data.")
 def cards(setid, filename):
     click.echo(f"Collecting cards from set id of {setid}")
@@ -76,18 +76,23 @@ def cards(setid, filename):
     click.echo("Error Occurred while saving the file.")
 
 @lorcast.command(help="Collects everything.")
-@click.option("-o", "--output", type=click.Choice(["JSON", "CSV"], case_sensitive=True), is_flag=False, help="Output format for the collected data.")
+@click.option("-o", "--output", required=True, type=click.Choice(["JSON", "CSV"], case_sensitive=False), is_flag=False, help="Output format for the collected data.")
 @click.pass_context
 def all(ctx, output):
     click.echo('Collecting everthing')
 
-    # Invoke the 'sets' command
-    sets_data = ctx.invoke(sets, filename="sets.json")
+    if output:
+        file_ext = output.lower()
+        sets_filename = f"sets.{file_ext}"
 
-    # Invoke the 'cards' command for each set
-    for set_data in sets_data:
-        set_id = set_data["id"]
-        set_name = set_data["name"]
-        ctx.invoke(cards, setid=set_id, filename=f"{set_name}.json")
+        # Invoke the 'sets' command
+        sets_data = ctx.invoke(sets, filename=sets_filename)
+
+        # Invoke the 'cards' command for each set
+        for set_data in sets_data:
+            set_id = set_data["id"]
+            set_name = set_data["name"]
+            cards_filename = f"{set_name}.{file_ext}"
+            ctx.invoke(cards, setid=set_id, filename=cards_filename)
 
     

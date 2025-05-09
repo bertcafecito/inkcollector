@@ -26,7 +26,7 @@ class InkCollector:
         Returns:
             logging.Logger: Configured logger instance.
         """
-        return setup_logger(self.name)
+        return setup_logger()
     
     def log(self, message: str, level: int = logging.INFO):
         """
