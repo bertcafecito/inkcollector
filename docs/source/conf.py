@@ -1,35 +1,31 @@
-import os
-import sys
-sys.path.insert(0, os.path.abspath(".."))
-
 # Configuration file for the Sphinx documentation builder.
 #
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import toml
+from pathlib import Path
+
+# Load project metadata from pyproject.toml
+pyproject_path = Path(__file__).resolve().parents[2] / "pyproject.toml"
+pyproject_data = toml.load(pyproject_path)
+project_metadata = pyproject_data.get("project", {})
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'inkcollector'
-copyright = '2025, Bert Cafecito'
-author = 'Bert Cafecito'
-release = '0.1.0'
+project = project_metadata.get("name", "Unknown Project")
+copyright = f"2025, {project_metadata.get('authors', [{'name': 'Unknown Author'}])[0]['name']}"
+author = project_metadata.get("authors", [{'name': 'Unknown Author'}])[0]['name']
+release = project_metadata.get("version", "0.0.0")
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = [
-    "sphinx.ext.autodoc",
-    "sphinx.ext.napoleon",
-    "sphinx.ext.viewcode",
-    "sphinx_autodoc_typehints",
-    "myst_parser",
-]
+extensions = []
 
 templates_path = ['_templates']
 exclude_patterns = []
-
-
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
