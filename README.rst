@@ -26,8 +26,8 @@ The project is not responsible for any misuse of the data collected or any legal
 its use. By using this project, you agree to comply with all applicable laws and regulations regarding
 data collection and usage. Please respect the intellectual property rights of Disney and Ravensburger.
 
-As part of the Disney Lorcana community, this project aims to follow the `Ravensburger community code`_ 
-published by Ravensburger. I encourage you to support the game and its creators by purchasing official
+As part of the Disney Lorcana community, this project aims to follow the `Ravensburger community code`_. 
+I encourage you to support the game and its creators by purchasing official
 products and engaging with the community in a positive manner.
 
 Requirements
