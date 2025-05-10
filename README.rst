@@ -30,6 +30,8 @@ As part of the Disney Lorcana community, this project aims to follow the `Ravens
 I encourage you to support the game and its creators by purchasing official
 products and engaging with the community in a positive manner.
 
+.. _`Ravensburger community code`: https://cdn.ravensburger.com/lorcana/community-code-en
+
 Requirements
 ============
 
@@ -61,10 +63,10 @@ Acknowledgements
 * Thanks to the developers and folks at Lorcast for their work on the `Lorcana API`_ 
   and their contributions to the community.
 
+.. _`Lorcana API`: https://lorcast.com/docs/api
+
 License
 =======
 Inkcollector is licensed under the MIT License. See the `LICENSE`_ file for more details.
 
 .. _`LICENSE`: LICENSE
-.. _`Ravensburger community code`: https://cdn.ravensburger.com/lorcana/community-code-en
-.. _`Lorcana API`: https://lorcast.com/docs/api
