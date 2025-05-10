@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]  # or 'master' if that's your default branch
 
+permissions:
+  contents: read
+  pages: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
