@@ -1,54 +1,35 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "inkcollector"
 version = "0.1.0"
-description = "Inkcollector is a CLI tool for collecting data about the disney lorcana trading card game."
+dependencies = [
+  "click>=8.1.8",
+  "requests>=2.32.3"
+]
+requires-python = ">=3.9"
 authors = [
     { name = "Bert Cafecito", email = "your-email@example.com" }
 ]
-license = { text = "MIT" }
-requires-python = ">=3.7"
-dependencies = [
-    # Add your runtime dependencies here, e.g., "requests>=2.25.1"
-    "click>=8.1.8",
-    "requests>=2.32.3"
-]
+description = "Inkcollector is a CLI tool for collecting data about the disney lorcana trading card game."
+readme = "README.rst"
+license = "MIT"
+license-files = ["LICEN[CS]E.*"]
 keywords = ["disney", "lorcana"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent"
 ]
-urls = {
-  "Homepage" = "https://github.com/your-repo/inkcollector",
-  "Repository" = "https://github.com/your-repo/inkcollector",
-  "Documentation" = "https://your-docs-url"
-}
+
+[project.urls]
+Homepage = "https://bertcafecito.github.io/inkcollector/"
+Documentation = "https://bertcafecito.github.io/inkcollector/"
+Repository = "https://github.com/bertcafecito/inkcollector"
+"Bug Tracker" = "https://github.com/bertcafecito/inkcollector/issues"
+Changelog = "https://github.com/bertcafecito/inkcollector/blob/main/CHANGELOG.md"
 
 [project.scripts]
 inkcollector = "inkcollector.cli:main"
-
-[tool.setuptools.packages.find]
-where = ["."]
-
-[project.optional-dependencies]
-docs = [
-  "sphinx",
-  "sphinx-rtd-theme",
-  "myst-parser",
-  "sphinx-autodoc-typehints",
-  "toml"
-]
-
-[project.optional-dependencies.dev]
-testing = [
-  "pytest",
-  "pytest-cov"
-]
-formatting = [
-  "black",
-  "flake8"
-]
