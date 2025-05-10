@@ -1,17 +1,34 @@
-.. Inkcollector documentation master file, created by
-   sphinx-quickstart on Sat May 10 01:36:44 2025.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. _topics-index:
 
+==========================
 Inkcollector documentation
 ==========================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+Inkcollector is a command-line interface (CLI) tool designed to collect data about the
+Disney Lorcana trading card game
 
+.. _getting-help:
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+Getting help
+============
+
+Having trouble? We'd like to help!
+
+* Report bugs with Inkcollector in our `issue tracker`_
+
+.. _issue tracker: https://github.com/bertcafecito/inkcollector/issues
+
+Installing Inkcollector
+=======================
+
+To install Inkcollector, you can use pip:
+
+.. code:: bash
+
+    pip install inkcollector
+
+This will install the latest version of Inkcollector from PyPI.
+
+I strongly recommend that you install Inkcollector in a dedicated virtualenv,
+to avoid conflicting with your system packages.
 
