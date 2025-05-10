@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inkcollector"
+version = "0.1.0"
+description = "Inkcollector is a CLI tool for collecting data about the disney lorcana trading card game."
+authors = [
+    { name = "Bert Cafecito", email = "your-email@example.com" }
+]
+license = { text = "MIT" }
+requires-python = ">=3.7"
+dependencies = [
+    # Add your runtime dependencies here, e.g., "requests>=2.25.1"
+    "click>=8.1.8",
+    "requests>=2.32.3"
+]
+keywords = ["disney", "lorcana"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+urls = {
+  "Homepage" = "https://github.com/your-repo/inkcollector",
+  "Repository" = "https://github.com/your-repo/inkcollector",
+  "Documentation" = "https://your-docs-url"
+}
+
+[project.scripts]
+inkcollector = "inkcollector.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[project.optional-dependencies]
+docs = [
+  "sphinx",
+  "sphinx-rtd-theme",
+  "myst-parser",
+  "sphinx-autodoc-typehints",
+  "toml"
+]
+
+[project.optional-dependencies.dev]
+testing = [
+  "pytest",
+  "pytest-cov"
+]
+formatting = [
+  "black",
+  "flake8"
+]
