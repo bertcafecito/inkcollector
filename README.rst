@@ -1,80 +1,70 @@
-# Inkcollector
+============
+Inkcollector
+============
 
-Inkcollector is a command-line interface (CLI) tool designed to collect data about the Disney Lorcana trading card game.
+.. image:: https://img.shields.io/pypi/v/inkcollector
+    :target: https://pypi.org/pypi/Scrapy
+    :alt: PyPI - Version
 
-## Features
+.. image:: https://img.shields.io/pypi/pyversions/inkcollector
+    :target: https://pypi.org/pypi/Scrapy
+    :alt: PyPI - Python Version
 
-- Fetch and display information about Disney Lorcana cards.
-- Easy-to-use CLI interface powered by [Click](https://click.palletsprojects.com/).
-- Extensible and open-source.
+Overview
+========
 
-## Installation
+Inkcollector is a command-line interface (CLI) tool designed to collect data about the
+Disney Lorcana trading card game.
 
-To install Inkcollector, clone the repository and install the dependencies:
+Disclaimer
+==========
 
-```bash
-git clone https://github.com/your-username/inkcollector.git
-cd inkcollector
-pip install .
-```
+This project is not affiliated with or endorsed by Disney or Ravensburger. It is an independent
+project created for educational and entertainment purposes. The data collected is intended for personal use
+and should not be used for commercial purposes without permission from the respective copyright holders.
+The project is not responsible for any misuse of the data collected or any legal issues that may arise from
+its use. By using this project, you agree to comply with all applicable laws and regulations regarding
+data collection and usage. Please respect the intellectual property rights of Disney and Ravensburger.
 
-## Usage
+As part of the Disney Lorcana community, this project aims to follow the `Ravensburger community code`_ 
+published by Ravensburger. I encourage you to support the game and its creators by purchasing official
+products and engaging with the community in a positive manner.
 
-Run the CLI tool using the following command:
+Requirements
+============
 
-```bash
-inkcollector
-```
+* Python 3.9+
+* Works on Linux, Windows
 
-For help and available commands, use:
+Installation
+============
 
-```bash
-inkcollector --help
-```
+To install Inkcollector, you can use pip:
 
-## Getting Started
+.. code:: bash
+    
+    pip install inkcollector
 
-Here is a quick example of how to use Inkcollector to fetch information about a specific card:
+Support
+=======
 
-```bash
-inkcollector fetch-card --name "Mickey Mouse"
-```
+If you would like to support this project or me, you can do so by:
 
-This will display detailed information about the specified card.
+* Starring the project on GitHub.
+* Following me on GitHub.
+* Sharing the project with others who might find it useful.
 
-## Development
+Acknowledgements
+================
 
-To set up a development environment, install the optional dependencies for documentation and testing:
+* Thanks to the Disney Lorcana community for their support and enthusiasm for the game.
+* Thanks to the developers and folks at Lorcast for their work on the `Lorcana API`_ 
+  and their contributions to the community.
 
-```bash
-pip install .[docs,dev]
-```
+License
+=======
+Inkcollector is licensed under the MIT License. See the `LICENSE`_ file for more details.
 
-### Running Tests
-
-Run the test suite using `pytest`:
-
-```bash
-pytest
-```
-
-### Code Formatting
-
-Ensure your code is formatted using `black`:
-
-```bash
-black .
-```
-
-## Contributing
-
-Contributions are welcome! To contribute:
-
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
-3. Make your changes and ensure tests pass.
-4. Submit a pull request with a clear description of your changes.
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+.. _`LICENSE`: LICENSE
+.. _`Ravensburger community code`: https://cdn.ravensburger.com/lorcana/community-code-en
+.. _`Lorcana API`: https://lorcast.com/docs/api
