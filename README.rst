@@ -3,11 +3,11 @@ Inkcollector
 ============
 
 .. image:: https://img.shields.io/pypi/v/inkcollector
-    :target: https://pypi.org/pypi/Scrapy
+    :target: https://pypi.org/pypi/inkcollector
     :alt: PyPI - Version
 
 .. image:: https://img.shields.io/pypi/pyversions/inkcollector
-    :target: https://pypi.org/pypi/Scrapy
+    :target: https://pypi.org/pypi/inkcollector
     :alt: PyPI - Python Version
 
 Overview
