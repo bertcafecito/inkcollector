@@ -11,7 +11,7 @@ dependencies = [
 ]
 requires-python = ">=3.9"
 authors = [
-    { name = "Bert Cafecito", email = "your-email@example.com" }
+  { name = "Bert Cafecito", email = "your-email@example.com" }
 ]
 description = "Inkcollector is a CLI tool for collecting data about the disney lorcana trading card game."
 readme = "README.rst"
@@ -19,15 +19,21 @@ license = "MIT"
 license-files = ["LICEN[CS]E.*"]
 keywords = ["disney", "lorcana"]
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent"
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent"
 ]
 
 [project.optional-dependencies]
 docs = [
-    "Sphinx>=8.2.3",
-    "sphinx-rtd-theme>=3.0.2"
+  "Sphinx>=8.2.3",
+  "sphinx-rtd-theme>=3.0.2"
 ]
 
 [project.urls]
