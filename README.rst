@@ -5,26 +5,21 @@ Inkcollector
 .. image:: https://img.shields.io/github/license/bertcafecito/inkcollector
     :alt: License
     :target: https://github.com/bertcafecito/inkcollector/blob/main/LICENSE
-
 .. image:: https://img.shields.io/pypi/v/inkcollector
     :alt: PyPI - Version
     :target: https://pypi.org/pypi/inkcollector
-
 .. image:: https://img.shields.io/pypi/pyversions/inkcollector
     :alt: PyPI - Python Version
     :target: https://pypi.org/pypi/inkcollector
-
 .. image:: https://img.shields.io/pypi/dm/inkcollector
-   :alt: PyPI - Downloads
+    :alt: PyPI - Downloads
     :target: https://pypi.org/pypi/inkcollector
-
 .. image:: https://img.shields.io/github/contributors/bertcafecito/inkcollector
-   :alt: Contributors
-   :target: https://github.com/bertcafecito/inkcollector/graphs/contributors
-
+    :alt: Contributors
+    :target: https://github.com/bertcafecito/inkcollector/graphs/contributors
 .. image:: https://img.shields.io/github/issues/bertcafecito/inkcollector
-   :alt: Issues
-   :target: https://github.com/bertcafecito/inkcollector/issues
+    :alt: Issues
+    :target: https://github.com/bertcafecito/inkcollector/issues
 
 Overview
 ========
