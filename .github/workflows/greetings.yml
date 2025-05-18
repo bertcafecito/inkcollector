@@ -13,4 +13,4 @@ jobs:
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         issue-message: "🛠️ Thanks for reporting your first issue! You’re officially a bug hunter — and we love having you on board!"
-        pr-message: "Message that will be displayed on users' first pull request"
+        pr-message: "🎉 Your first PR just dropped and it rocks! Thanks for making this project better, one line of code at a time."
