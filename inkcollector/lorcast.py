@@ -88,7 +88,6 @@ class Lorcast(InkCollector):
             self.log(f"Response Error: {response.status_code} - {response.text}", level=logging.ERROR)
 
         if download_images:
-            self.log(f"Downloading images for set {set_id}", level=logging.INFO)
             # Create set directory if it does not exist
             set_dir = f"{self.images_dir}/{set_id}"
             self.setup_directories(set_dir)
@@ -124,7 +123,7 @@ class Lorcast(InkCollector):
             # Remove query parameters from the file name
             if "?" in file_name:
                 file_name = file_name.split("?")[0]
-                self.log("Removing query parameters from file name", level=logging.INFO)
+                self.log("Removed query parameters from file name", level=logging.INFO)
             file_path = os.path.join(set_dir, file_name)
             image_data = response.content
         else:
@@ -134,7 +133,7 @@ class Lorcast(InkCollector):
         with open(file_path, "wb") as image_file:
             image_file.write(image_data)
     
-        self.log(f"Downloaded image for {file_name}", level=logging.INFO)
+        self.log(f"Downloaded image for {file_name}.", level=logging.INFO)
         return None
         
 
