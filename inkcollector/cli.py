@@ -49,10 +49,11 @@ def sets(filename):
 @lorcast.command(help="Collects a detailed information about a specific Lorcana card set by using either the set's code or its unique identifier (ID).")
 @click.option("--setid", required=True, type=str, help="Provide a set's code or its unique identifier (ID).")
 @click.option("-fn", "--filename", type=str, is_flag=False, help="Provides a filename to save the collected data.")
-def cards(setid, filename):
+@click.option("-di", "--downloadimages", is_flag=True, help="Download images of the cards.")
+def cards(setid, filename, downloadimages):
     click.echo(f"Collecting cards from set id of {setid}")
     lorcast=Lorcast()
-    cards=lorcast.get_cards(setid)
+    cards=lorcast.get_cards(setid, downloadimages)
 
     # Check if the cards list is empty
     if not cards:
@@ -77,8 +78,9 @@ def cards(setid, filename):
 
 @lorcast.command(help="Collects everything.")
 @click.option("-of", "--outputformat", required=True, type=click.Choice(["JSON"], case_sensitive=False), is_flag=False, help="Output format for the collected data.")
+@click.option("-di", "--downloadimages", is_flag=True, help="Download images of the cards.")
 @click.pass_context
-def all(ctx, outputformat):
+def all(ctx, outputformat, downloadimages):
     click.echo('Collecting everthing')
 
     if outputformat:
@@ -93,6 +95,10 @@ def all(ctx, outputformat):
             set_id = set_data["id"]
             set_name = set_data["name"]
             cards_filename = f"lorcast/sets/{set_name}.{file_ext}"
-            ctx.invoke(cards, setid=set_id, filename=cards_filename)
+
+            if downloadimages:
+                ctx.invoke(cards, setid=set_id, filename=cards_filename, downloadimages=True)
+            else:
+                ctx.invoke(cards, setid=set_id, filename=cards_filename)
 
     

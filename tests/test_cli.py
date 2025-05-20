@@ -35,14 +35,32 @@ def test_cards_command(mock_lorcast, runner):
     mock_instance.get_cards.return_value = [{"id": "101", "name": "Card1"}]
     mock_instance.file_output.return_value = True
 
-    # Run the command
+    # Run the command without --downloadimages
     result = runner.invoke(cards, ["--setid", "1", "--filename", "cards.json"])
 
     # Assertions
     assert result.exit_code == 0
     assert "Found 1 cards." in result.output
     assert "File saved successfully." in result.output
-    mock_instance.get_cards.assert_called_once_with("1")
+    mock_instance.get_cards.assert_called_once_with("1", False)
+    mock_instance.file_output.assert_called_once_with([{"id": "101", "name": "Card1"}], "cards.json")
+
+@patch("inkcollector.cli.Lorcast")
+def test_cards_command_with_downloadimages(mock_lorcast, runner):
+    # Mock Lorcast behavior
+    mock_instance = MagicMock()
+    mock_lorcast.return_value = mock_instance
+    mock_instance.get_cards.return_value = [{"id": "101", "name": "Card1"}]
+    mock_instance.file_output.return_value = True
+
+    # Run the command with --downloadimages
+    result = runner.invoke(cards, ["--setid", "1", "--filename", "cards.json", "--downloadimages"])
+
+    # Assertions
+    assert result.exit_code == 0
+    assert "Found 1 cards." in result.output
+    assert "File saved successfully." in result.output
+    mock_instance.get_cards.assert_called_once_with("1", True)
     mock_instance.file_output.assert_called_once_with([{"id": "101", "name": "Card1"}], "cards.json")
 
 @patch("inkcollector.cli.Lorcast")
@@ -54,7 +72,7 @@ def test_all_command(mock_lorcast, runner):
     mock_instance.get_cards.return_value = [{"id": "101", "name": "Card1"}]
     mock_instance.file_output.return_value = True
 
-    # Run the command
+    # Run the command without --downloadimages
     result = runner.invoke(all, ["--outputformat", "JSON"])
 
     # Assertions
@@ -64,6 +82,29 @@ def test_all_command(mock_lorcast, runner):
     assert "Found 1 cards." in result.output
     assert "File saved successfully." in result.output
     mock_instance.get_sets.assert_called_once()
-    mock_instance.get_cards.assert_called_once_with("1")
+    mock_instance.get_cards.assert_any_call("1", False)
+    mock_instance.file_output.assert_any_call([{"id": "1", "name": "Set1"}], "lorcast/sets.json")
+    mock_instance.file_output.assert_any_call([{"id": "101", "name": "Card1"}], "lorcast/sets/Set1.json")
+
+@patch("inkcollector.cli.Lorcast")
+def test_all_command_with_downloadimages(mock_lorcast, runner):
+    # Mock Lorcast behavior
+    mock_instance = MagicMock()
+    mock_lorcast.return_value = mock_instance
+    mock_instance.get_sets.return_value = [{"id": "1", "name": "Set1"}]
+    mock_instance.get_cards.return_value = [{"id": "101", "name": "Card1"}]
+    mock_instance.file_output.return_value = True
+
+    # Run the command with --downloadimages
+    result = runner.invoke(all, ["--outputformat", "JSON", "--downloadimages"])
+
+    # Assertions
+    assert result.exit_code == 0
+    assert "Collecting everthing" in result.output
+    assert "Found 1 sets." in result.output
+    assert "Found 1 cards." in result.output
+    assert "File saved successfully." in result.output
+    mock_instance.get_sets.assert_called_once()
+    mock_instance.get_cards.assert_any_call("1", True)
     mock_instance.file_output.assert_any_call([{"id": "1", "name": "Set1"}], "lorcast/sets.json")
     mock_instance.file_output.assert_any_call([{"id": "101", "name": "Card1"}], "lorcast/sets/Set1.json")
