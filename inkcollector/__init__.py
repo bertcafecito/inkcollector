@@ -19,6 +19,15 @@ class InkCollector:
         self.config_file = config_file
         self.config = self.load_config()
 
+        # Set up directories
+        self.data_dir = self.config.get("Directories", "Data", fallback="data")
+        self.images_dir = self.config.get("Directories", "Images", fallback="images")
+        self.logs_dir = self.config.get("Directories", "Logs", fallback="logs")
+
+        self.setup_directories(self.data_dir)
+        self.setup_directories(self.images_dir)
+        self.setup_directories(self.logs_dir)
+
     @property
     def logger(self):
         """
@@ -55,6 +64,18 @@ class InkCollector:
         else:
             self.log(f"Configuration file {self.config_file} not found. Using default settings.", logging.WARNING)
         return config
+    
+    def setup_directories(self, directory):
+        """
+        Sets up the necessary directories for storing data.
+        
+        Creates a data directory if it does not exist.
+        """
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+            self.log(f"Created directory: {directory}", logging.INFO)
+        else:
+            self.log(f"Directory already exists: {directory}", logging.INFO)
 
     def file_output(self, data, filepath):
         """

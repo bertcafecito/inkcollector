@@ -175,4 +175,5 @@ cython_debug/
 
 # Inkcollector stuff
 data/
+images/
 logs/
