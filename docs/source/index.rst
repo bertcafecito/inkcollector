@@ -107,12 +107,14 @@ Options:
 
 - ``--setid``: Required. The code or ID of the card set.
 - ``-fn``, ``--filename``: Optional filename to save the data.
+- ``-di``, ``--downloadimages``: Optional flag. Download images of the cards.
 
 Behavior:
 
 - Retrieves card details for the specified set.
 - Displays the number of cards found.
 - Saves the data to a file if a filename is provided.
+- Downloads images for each card if the flag is set.
 - Displays an error message if saving fails.
 
 **all**
@@ -121,17 +123,19 @@ Fetches and stores all data for sets and their cards.
 
 .. code-block:: shell
 
-    python -m inkcollector lorcast all --outputformat <FORMAT>
+    python -m inkcollector lorcast all --outputformat <FORMAT> [OPTIONS]
 
 Options:
 
 - ``-of``, ``--outputformat``: Required. Currently only supports ``JSON``.
+- ``-di``, ``--downloadimages``: Optional flag. Download images of the cards for all sets.
 
 Behavior:
 
 - Fetches all sets.
 - Iterates through each set and fetches all associated cards.
 - Saves each dataset to individual files in a structured format.
+- Downloads images for all cards if the flag is set.
 
 Output Formats
 --------------
@@ -153,15 +157,15 @@ Collect sets and save to a file:
 
     python -m inkcollector lorcast sets --filename sets.json
 
-Collect cards for a specific set:
+Collect cards for a specific set and download images:
 
 .. code-block:: shell
 
-    python -m inkcollector lorcast cards --setid ABC123 --filename cards.json
+    python -m inkcollector lorcast cards --setid ABC123 --filename cards.json --downloadimages
 
-Collect all sets and their cards:
+Collect all sets and their cards, downloading all images:
 
 .. code-block:: shell
 
-    python -m inkcollector lorcast all --outputformat JSON
+    python -m inkcollector lorcast all --outputformat JSON --downloadimages
 
