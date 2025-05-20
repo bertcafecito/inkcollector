@@ -15,7 +15,6 @@ class Lorcast(InkCollector):
         self.name = "lorcast"
         self.description = "Collects data from the Lorecast API."
         self.api_base_url = "https://api.lorcast.com"
-        self.api_base_url = "https://api.lorcast.com"
         self.api_current_version = "v0"
         self.api_rate_limit = 5 # delay per request in seconds
         self.api_url = f"{self.api_base_url}/{self.api_current_version}"
