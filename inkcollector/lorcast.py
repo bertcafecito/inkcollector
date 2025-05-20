@@ -132,7 +132,7 @@ class Lorcast(InkCollector):
         with open(file_path, "wb") as image_file:
             image_file.write(image_data)
     
-        self.log(f"Downloaded image for {file_name}.", level=logging.INFO)
+        self.log(f"Downloaded image: {file_name}.", level=logging.INFO)
         return None
         
 
