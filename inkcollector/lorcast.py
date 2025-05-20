@@ -115,8 +115,6 @@ class Lorcast(InkCollector):
         try:
             response = requests.get(image_uri)
             response.raise_for_status()  # Raise an error for bad responses
-            # Simulate rate limiting
-            time.sleep(self.api_rate_limit)
         except requests.exceptions.RequestException as e:
             self.log(f"Error downloading image: {str(e)}", level=logging.ERROR)
             return None
