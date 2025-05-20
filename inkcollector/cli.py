@@ -78,8 +78,9 @@ def cards(setid, filename, downloadimages):
 
 @lorcast.command(help="Collects everything.")
 @click.option("-of", "--outputformat", required=True, type=click.Choice(["JSON"], case_sensitive=False), is_flag=False, help="Output format for the collected data.")
+@click.option("-di", "--downloadimages", is_flag=True, help="Download images of the cards.")
 @click.pass_context
-def all(ctx, outputformat):
+def all(ctx, outputformat, downloadimages):
     click.echo('Collecting everthing')
 
     if outputformat:
@@ -94,6 +95,10 @@ def all(ctx, outputformat):
             set_id = set_data["id"]
             set_name = set_data["name"]
             cards_filename = f"lorcast/sets/{set_name}.{file_ext}"
-            ctx.invoke(cards, setid=set_id, filename=cards_filename)
+
+            if downloadimages:
+                ctx.invoke(cards, setid=set_id, filename=cards_filename, downloadimages=True)
+            else:
+                ctx.invoke(cards, setid=set_id, filename=cards_filename)
 
     

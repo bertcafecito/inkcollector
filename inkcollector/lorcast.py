@@ -115,12 +115,18 @@ class Lorcast(InkCollector):
         try:
             response = requests.get(image_uri)
             response.raise_for_status()  # Raise an error for bad responses
+            # Simulate rate limiting
+            time.sleep(self.api_rate_limit)
         except requests.exceptions.RequestException as e:
             self.log(f"Error downloading image: {str(e)}", level=logging.ERROR)
             return None
         
         if response.status_code == 200:
             file_name = os.path.basename(image_uri)
+            # Remove query parameters from the file name
+            if "?" in file_name:
+                file_name = file_name.split("?")[0]
+                self.log("Removing query parameters from file name", level=logging.INFO)
             file_path = os.path.join(set_dir, file_name)
             image_data = response.content
         else:
