@@ -44,4 +44,4 @@ Repository = "https://github.com/bertcafecito/inkcollector"
 Changelog = "https://github.com/bertcafecito/inkcollector/blob/main/CHANGELOG.md"
 
 [project.scripts]
-inkcollector = "inkcollector.argparse_cli:main"
+inkcollector = "inkcollector.cli:main"
