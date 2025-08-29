@@ -45,6 +45,34 @@ class LorcastAPI():
         except json.JSONDecodeError as e:
             print(f"Failed to decode JSON response: {e}")
             raise ValueError(f"Invalid JSON response: {e}")
+        
+    def get_set(self, set_id):
+        """
+        Retrieves details of a specific set from the Lorcast API.
+
+        Parameters:
+            set_id (str): The ID of the set to retrieve.
+
+        Returns:
+            dict: A dictionary containing details of the specified set.
+        """
+        url = f"{self.api_url}/sets/{set_id}"
+
+        # Check if set_id is provided
+        if not set_id:
+            raise ValueError("set_id must be provided to fetch set details.")
+
+        try:
+            response = self.session.get(url)
+            response.raise_for_status()  # Raise an exception for bad status codes
+
+            return response.json()
+        except requests.RequestException as e:
+            print(f"Request failed: {e}")
+            raise
+        except json.JSONDecodeError as e:
+            print(f"Failed to decode JSON response: {e}")
+            raise ValueError(f"Invalid JSON response: {e}")
     
     def get_cards(self, set_id):
         """
