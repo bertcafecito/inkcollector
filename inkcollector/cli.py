@@ -41,6 +41,10 @@ class InkcollectorCLI:
             self.data_output_dir = self.DATA_OUTPUT_DIR
             self.image_output_dir = self.IMAGE_OUTPUT_DIR
 
+        # Track if custom directories were specified via command line
+        self.using_custom_data_dir = False
+        self.using_custom_image_dir = False
+
         self._setup_output_directories()
         self._setup_parser()
 
@@ -163,6 +167,12 @@ class InkcollectorCLI:
         get_sets_parser.add_argument(
             "--save-json", action="store_true", help="Save JSON data to a file"
         )
+        get_sets_parser.add_argument(
+            "--output-dir", type=str, help="Custom base directory for data storage"
+        )
+        get_sets_parser.add_argument(
+            "--image-dir", type=str, help="Custom base directory for image storage"
+        )
 
         # Add get-cards subcommand
         get_cards_parser = lorcast_subparsers.add_parser(
@@ -188,6 +198,12 @@ class InkcollectorCLI:
                 "(choices: small, normal, large; default: normal)"
             ),
         )
+        get_cards_parser.add_argument(
+            "--output-dir", type=str, help="Custom base directory for data storage"
+        )
+        get_cards_parser.add_argument(
+            "--image-dir", type=str, help="Custom base directory for image storage"
+        )
 
     def handle_lorcast_command(self, args: argparse.Namespace) -> None:
         """Handle lorcast command and route to appropriate subcommand handler.
@@ -204,6 +220,9 @@ class InkcollectorCLI:
 
         # Apply workspace and profile overrides
         self._apply_args_overrides(args)
+
+        # Apply directory overrides if specified
+        self._apply_directory_overrides(args)
 
         lorcast = LorcastAPI()
 
@@ -242,6 +261,26 @@ class InkcollectorCLI:
         # This method is kept for backward compatibility
         # Global overrides are now handled in _apply_global_overrides
         pass
+
+    def _apply_directory_overrides(self, args: argparse.Namespace) -> None:
+        """Apply command line directory overrides.
+
+        Args:
+            args: Parsed command line arguments
+        """
+        # Override data output directory if specified
+        if hasattr(args, "output_dir") and args.output_dir:
+            self.data_output_dir = args.output_dir
+            self.using_custom_data_dir = True
+            self._create_directory_if_not_exists(self.data_output_dir)
+            print(f"Using custom data output directory: {self.data_output_dir}")
+
+        # Override image output directory if specified
+        if hasattr(args, "image_dir") and args.image_dir:
+            self.image_output_dir = args.image_dir
+            self.using_custom_image_dir = True
+            self._create_directory_if_not_exists(self.image_output_dir)
+            print(f"Using custom image output directory: {self.image_output_dir}")
 
     def _handle_config_init_command(self, args: argparse.Namespace) -> None:
         """Handle the config init subcommand.
@@ -449,10 +488,15 @@ class InkcollectorCLI:
         Args:
             sets: List of set data dictionaries
         """
-        output_path = os.path.join(self.data_output_dir, self.LORCAST_DATASOURCE_DIR)
-        self._create_directory_if_not_exists(output_path)
-
-        file_path = os.path.join(output_path, "sets.json")
+        if self.using_custom_data_dir:
+            # Full override: save directly to custom directory without any subdirectories
+            output_path = self.data_output_dir
+            file_path = os.path.join(output_path, "sets.json")
+        else:
+            # Default behavior: use lorcast subdirectory
+            output_path = os.path.join(self.data_output_dir, self.LORCAST_DATASOURCE_DIR)
+            self._create_directory_if_not_exists(output_path)
+            file_path = os.path.join(output_path, "sets.json")
 
         try:
             with open(file_path, "w", encoding="utf-8") as f:
@@ -468,12 +512,17 @@ class InkcollectorCLI:
             cards: List of card data dictionaries
             set_id: ID of the set
         """
-        output_path = os.path.join(
-            self.data_output_dir, self.LORCAST_DATASOURCE_DIR, "sets"
-        )
-        self._create_directory_if_not_exists(output_path)
-
-        file_path = os.path.join(output_path, f"{set_id}.json")
+        if self.using_custom_data_dir:
+            # Full override: save directly to custom directory with just the set filename
+            output_path = self.data_output_dir
+            file_path = os.path.join(output_path, f"{set_id}.json")
+        else:
+            # Default behavior: use lorcast subdirectory structure
+            output_path = os.path.join(
+                self.data_output_dir, self.LORCAST_DATASOURCE_DIR, "sets"
+            )
+            self._create_directory_if_not_exists(output_path)
+            file_path = os.path.join(output_path, f"{set_id}.json")
 
         try:
             with open(file_path, "w", encoding="utf-8") as f:
@@ -497,11 +546,16 @@ class InkcollectorCLI:
             set_id: ID of the set
             image_size: Size of the image to download ('small', 'normal', 'large')
         """
-        output_path = os.path.join(
-            self.image_output_dir, self.LORCAST_DATASOURCE_DIR, "sets", set_id
-        )
-        self._create_directory_if_not_exists(output_path)
-
+        if self.using_custom_image_dir:
+            # Full override: save directly to custom directory without subdirectories
+            output_path = self.image_output_dir
+        else:
+            # Default behavior: use lorcast subdirectory structure
+            output_path = os.path.join(
+                self.image_output_dir, self.LORCAST_DATASOURCE_DIR, "sets", set_id
+            )
+            self._create_directory_if_not_exists(output_path)
+        
         print(f"Downloading images for {len(cards)} cards...")
         successful_downloads = 0
 
