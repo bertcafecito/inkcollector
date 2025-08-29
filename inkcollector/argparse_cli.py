@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 
 from inkcollector import __version__
 from inkcollector.lorcast import LorcastAPI
@@ -12,7 +13,14 @@ class InkcollectorCLI:
         """Initialize the CLI parser."""
         self.parser = None
         self._setup_parser()
-    
+
+    def __setup_output_dir(self):
+        """Set up the file output options."""
+        self.output_dir = "data"
+        # Create the output directory if it doesn't exist
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+
     def _setup_parser(self):
         """Set up the argument parser and subcommands."""
         self.parser = argparse.ArgumentParser(
@@ -40,7 +48,7 @@ class InkcollectorCLI:
             'lorcast',
             help='Lorcast command (under development)'
         )
-        
+
         # Add subcommands for lorcast
         lorcast_subparsers = lorcast_parser.add_subparsers(dest='lorcast_command', help='Lorcast subcommands')
         
@@ -52,9 +60,14 @@ class InkcollectorCLI:
         get_sets_parser.add_argument(
             '--json',
             action='store_true',
-            help='Output data in JSON format'
+            help='Print JSON data in the Console'
         )
-        
+        get_sets_parser.add_argument(
+            '--save-json',
+            action='store_true',
+            help='Save JSON data to a file'
+        )
+
         # Add get-cards subcommand
         get_cards_parser = lorcast_subparsers.add_parser(
             'get-cards',
@@ -69,7 +82,12 @@ class InkcollectorCLI:
         get_cards_parser.add_argument(
             '--json',
             action='store_true',
-            help='Output data in JSON format'
+            help='Print JSON data in the Console'
+        )
+        get_cards_parser.add_argument(
+            '--save-json',
+            action='store_true',
+            help='Save JSON data to a file'
         )
         
         # Add get-images subcommand
@@ -86,6 +104,7 @@ class InkcollectorCLI:
     def handle_lorcast_command(self, args):
         """Handle lorcast command and its subcommands."""
         lorcast = LorcastAPI()
+        datasource_dir = "lorcast"
         if hasattr(args, 'lorcast_command') and args.lorcast_command:
             if args.lorcast_command == 'get-sets':
                 sets = lorcast.get_sets()
@@ -94,7 +113,7 @@ class InkcollectorCLI:
                     print("No sets found.")
                     return
 
-                print(f"Found {len(sets)} sets.\n")
+                print(f"Found {len(sets)} sets.")
 
                 if args.json:
                     print(f"\n{'='*60}")
@@ -102,6 +121,21 @@ class InkcollectorCLI:
                     print(f"{'='*60}")
                     print(f"Found {len(sets)} sets:\n")
                     print(json.dumps(sets, indent=2))
+
+                if args.save_json:
+                    self.__setup_output_dir()
+                    output_path = os.path.join(self.output_dir, datasource_dir)
+                    # Create directory if it doesn't exist
+                    if not os.path.exists(output_path):
+                        os.makedirs(output_path)
+                    file_path = os.path.join(output_path, "sets.json")
+                    try:
+                        with open(file_path, 'w', encoding='utf-8') as f:
+                            json.dump(sets, f, ensure_ascii=False, indent=2)
+                        print(f"Sets data saved to {file_path}")
+                    except Exception as e:
+                        print(f"Error saving sets data to {file_path}: {e}")
+                    
 
             elif args.lorcast_command == 'get-cards':
                 set_id = args.set_id
@@ -115,6 +149,20 @@ class InkcollectorCLI:
                     print(f"{'='*60}")
                     print(f"Found {len(cards)} cards in set {set_id}:\n")
                     print(json.dumps(cards, indent=2))
+
+                if args.save_json:
+                    self.__setup_output_dir()
+                    output_path = os.path.join(self.output_dir, datasource_dir, "sets")
+                    # Create directory if it doesn't exist
+                    if not os.path.exists(output_path):
+                        os.makedirs(output_path)
+                    file_path = os.path.join(output_path, f"{set_id}.json")
+                    try:
+                        with open(file_path, 'w', encoding='utf-8') as f:
+                            json.dump(cards, f, ensure_ascii=False, indent=2)
+                        print(f"Cards data saved to {file_path}")
+                    except Exception as e:
+                        print(f"Error saving cards data to {file_path}: {e}")
 
             elif args.lorcast_command == 'get-images':
                 print("Get-images option is under development")
