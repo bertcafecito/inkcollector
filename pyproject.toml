@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "inkcollector"
-version = "0.1.1"
+version = "1.0.0"
 dependencies = [
   "click>=8.1.8",
   "requests>=2.32.3"
@@ -44,4 +44,4 @@ Repository = "https://github.com/bertcafecito/inkcollector"
 Changelog = "https://github.com/bertcafecito/inkcollector/blob/main/CHANGELOG.md"
 
 [project.scripts]
-inkcollector = "inkcollector.cli:main"
+inkcollector = "inkcollector.argparse_cli:main"
