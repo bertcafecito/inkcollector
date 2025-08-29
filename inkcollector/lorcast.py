@@ -27,7 +27,7 @@ class LorcastAPI():
 
     def get_sets(self):
         """
-        Retrieves a list of all card sets available in the Lorcast API.
+        Retrieves a list of all sets available in the Lorcast API.
 
         Returns:
             list: A list of sets, each represented as a dictionary with set details.
@@ -48,33 +48,30 @@ class LorcastAPI():
     
     def get_cards(self, set_id):
         """
-        Retrieves a list of cards for a specific set in the Lorcana Trading Card Game.
+        Retrieves a list of cards for a specific set from the Lorcast API.
 
-        Args:
-            set_id (str): The ID of the set to retrieve cards from.
+        Parameters:
+            set_id (str): The ID of the set to retrieve cards for.
 
         Returns:
-            list: A list of cards, each represented as a dictionary with card details.
+            list: A list of cards in the specified set, each represented as a dictionary with card details.
         """
-        api_endpoint = f"{self.api_url}/sets/{set_id}/cards"
+        url = f"{self.api_url}/sets/{set_id}/cards"
+
+        # Check if set_id is provided
+        if not set_id:
+            raise ValueError("set_id must be provided to fetch cards.")
 
         try:
-            self.log(f"Fetching cards from Lorcast API for set {set_id}", level=logging.INFO)
-            response = requests.get(api_endpoint)
-            response.raise_for_status()  # Raise an error for bad responses
-            # Simulate rate limiting
-            time.sleep(self.api_rate_limit)
-        except requests.exceptions.RequestException as e:
-            self.log(f"Error fetching data from API: {str(e)}", level=logging.ERROR)
-            return None
-        
-        if response.status_code == 200:
-            cards = response.json()
-        else:
-            self.log(f"Response Error: {response.status_code} - {response.text}", level=logging.ERROR)
-        
-        self.log(f"Found {len(cards)} cards.", level=logging.INFO)
-        return cards
+            response = self.session.get(url)
+            response.raise_for_status()  # Raise an exception for bad status codes
 
+            return response.json()
+        except requests.RequestException as e:
+            print(f"Request failed: {e}")
+            raise
+        except json.JSONDecodeError as e:
+            print(f"Failed to decode JSON response: {e}")
+            raise ValueError(f"Invalid JSON response: {e}")
         
     

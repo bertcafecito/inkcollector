@@ -49,17 +49,38 @@ class InkcollectorCLI:
             'get-sets',
             help='Get sets data'
         )
+        get_sets_parser.add_argument(
+            '--json',
+            action='store_true',
+            help='Output data in JSON format'
+        )
         
         # Add get-cards subcommand
         get_cards_parser = lorcast_subparsers.add_parser(
             'get-cards',
             help='Get cards data (under development)'
         )
+        get_cards_parser.add_argument(
+            '--set-id',
+            type=str,
+            required=True,
+            help='ID of the set to get cards from'
+        )
+        get_cards_parser.add_argument(
+            '--json',
+            action='store_true',
+            help='Output data in JSON format'
+        )
         
         # Add get-images subcommand
         get_images_parser = lorcast_subparsers.add_parser(
             'get-images',
             help='Get images data (under development)'
+        )
+        get_images_parser.add_argument(
+            '--json',
+            action='store_true',
+            help='Output data in JSON format'
         )
     
     def handle_lorcast_command(self, args):
@@ -71,15 +92,30 @@ class InkcollectorCLI:
                 # Check for empty list
                 if not sets:
                     print("No sets found.")
+                    return
 
-                print(f"\n{'='*60}")
-                print(f"{'DISNEY LORCANA SETS':^60}")
-                print(f"{'='*60}")
-                print(f"Found {len(sets)} sets:\n")
-                print(json.dumps(sets, indent=2))
-                
+                print(f"Found {len(sets)} sets.\n")
+
+                if args.json:
+                    print(f"\n{'='*60}")
+                    print(f"{'DISNEY LORCANA SETS':^60}")
+                    print(f"{'='*60}")
+                    print(f"Found {len(sets)} sets:\n")
+                    print(json.dumps(sets, indent=2))
+
             elif args.lorcast_command == 'get-cards':
-                print("Get-cards option is under development")
+                set_id = args.set_id
+                cards = lorcast.get_cards(set_id)
+
+                print(f"Found {len(cards)} cards for set id {set_id}.")
+
+                if args.json:
+                    print(f"\n{'='*60}")
+                    print(f"{'DISNEY LORCANA CARDS':^60}")
+                    print(f"{'='*60}")
+                    print(f"Found {len(cards)} cards in set {set_id}:\n")
+                    print(json.dumps(cards, indent=2))
+
             elif args.lorcast_command == 'get-images':
                 print("Get-images option is under development")
         else:
