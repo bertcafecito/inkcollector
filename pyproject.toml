@@ -4,9 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "inkcollector"
-version = "0.1.1"
+version = "1.0.0"
 dependencies = [
-  "click>=8.1.8",
   "requests>=2.32.3"
 ]
 requires-python = ">=3.9"
@@ -14,7 +13,7 @@ authors = [
   { name = "Bert Cafecito", email = "your-email@example.com" }
 ]
 description = "Inkcollector is a CLI tool for collecting data about the disney lorcana trading card game."
-readme = "README.rst"
+readme = "README.md"
 license = "MIT"
 license-files = ["LICEN[CS]E.*"]
 keywords = ["disney", "lorcana"]
@@ -26,6 +25,7 @@ classifiers = [
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent"
 ]
@@ -34,6 +34,14 @@ classifiers = [
 docs = [
   "Sphinx>=8.2.3",
   "sphinx-rtd-theme>=3.0.2"
+]
+dev = [
+  "pytest>=7.0.0",
+  "pytest-mock>=3.10.0",
+  "pytest-cov>=4.0.0",
+  "black>=23.0.0",
+  "isort>=5.12.0",
+  "flake8>=6.0.0"
 ]
 
 [project.urls]
@@ -45,3 +53,39 @@ Changelog = "https://github.com/bertcafecito/inkcollector/blob/main/CHANGELOG.md
 
 [project.scripts]
 inkcollector = "inkcollector.cli:main"
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["inkcollector"]
+
+[tool.coverage.run]
+source = ["inkcollector"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]

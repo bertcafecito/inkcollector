@@ -1,86 +1,133 @@
-import logging
+import json
+
 import requests
-import time
 
-from inkcollector import InkCollector
 
-class Lorcast(InkCollector):
+class LorcastAPI:
     """
-    A class to interact with the Lorcast API for collecting data on the Lorcana Trading Card Game.
-    
-    This class provides methods to retrieve card sets and cards from the API.
+    A class to interact with the Lorcast API for collecting data on the
+    Lorcana Trading Card Game.
+
+    This class provides methods to retrieve data from the API.
     """
-    def __init__(self):
-        self.name = "lorcast"
-        self.description = "Collects data from the Lorecast API."
-        self.api_base_url = "https://api.lorcast.com"
-        self.api_base_url = "https://api.lorcast.com"
-        self.api_current_version = "v0"
-        self.api_rate_limit = 5 # delay per request in seconds
-        self.api_url = f"{self.api_base_url}/{self.api_current_version}"
-        super().__init__(name=self.name)
+
+    def __init__(self, api_base_url="https://api.lorcast.com", api_version="v0"):
+        """
+        Initialize the LorcastAPI client.
+
+        Parameters:
+            api_base_url (str): The base URL for the Lorcast API.
+            api_version (str): The version of the API to use.
+        """
+        self.api_url = f"{api_base_url}/{api_version}"
+        self.session = requests.Session()
+
+        # Set default headers
+        self.session.headers.update(
+            {
+                "User-Agent": "InkCollector/1.0.0",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            }
+        )
 
     def get_sets(self):
         """
-        Retrieves a list of all card sets available in the Lorcana Trading Card Game, including both standard and promotional sets.
+        Retrieves a list of all sets available in the Lorcast API.
 
         Returns:
             list: A list of sets, each represented as a dictionary with set details.
         """
-        api_endpoint = f"{self.api_url}/sets"
+        url = f"{self.api_url}/sets"
 
         try:
-            self.log("Fetching sets from Lorcast API", level=logging.INFO)
-            response = requests.get(api_endpoint)
-            # Simulate rate limiting
-            time.sleep(self.api_rate_limit)
-            response.raise_for_status()  # Raise an error for bad responses
-        except requests.exceptions.RequestException as e:
-            self.log(f"Error fetching data from API: {str(e)}", level=logging.ERROR)
-            return None
-        
-        if response.status_code == 200:
-            data = response.json()
-            sets = data.get("results", None)
-        else:
-            self.log(f"Response Error: {response.status_code} - {response.text}", level=logging.ERROR)
+            response = self.session.get(url)
+            response.raise_for_status()  # Raise an exception for bad status codes
 
-        if not sets:
-            self.log("No sets found.", level=logging.WARNING)
-            return None
-        
-        self.log(f"Found {len(sets)} sets.", level=logging.INFO)
-        return sets
-    
-    def get_cards(self, set_id):
+            return response.json().get("results", [])
+        except requests.RequestException as e:
+            print(f"Request failed: {e}")
+            raise
+        except json.JSONDecodeError as e:
+            print(f"Failed to decode JSON response: {e}")
+            raise ValueError(f"Invalid JSON response: {e}")
+
+    def get_set(self, set_id):
         """
-        Retrieves a list of cards for a specific set in the Lorcana Trading Card Game.
+        Retrieves details of a specific set from the Lorcast API.
 
-        Args:
-            set_id (str): The ID of the set to retrieve cards from.
+        Parameters:
+            set_id (str): The ID of the set to retrieve.
 
         Returns:
-            list: A list of cards, each represented as a dictionary with card details.
+            dict: A dictionary containing details of the specified set.
         """
-        api_endpoint = f"{self.api_url}/sets/{set_id}/cards"
+        url = f"{self.api_url}/sets/{set_id}"
+
+        # Check if set_id is provided
+        if not set_id:
+            raise ValueError("set_id must be provided to fetch set details.")
 
         try:
-            self.log(f"Fetching cards from Lorcast API for set {set_id}", level=logging.INFO)
-            response = requests.get(api_endpoint)
-            response.raise_for_status()  # Raise an error for bad responses
-            # Simulate rate limiting
-            time.sleep(self.api_rate_limit)
-        except requests.exceptions.RequestException as e:
-            self.log(f"Error fetching data from API: {str(e)}", level=logging.ERROR)
-            return None
-        
-        if response.status_code == 200:
-            cards = response.json()
-        else:
-            self.log(f"Response Error: {response.status_code} - {response.text}", level=logging.ERROR)
-        
-        self.log(f"Found {len(cards)} cards.", level=logging.INFO)
-        return cards
+            response = self.session.get(url)
+            response.raise_for_status()  # Raise an exception for bad status codes
 
-        
-    
+            return response.json()
+        except requests.RequestException as e:
+            print(f"Request failed: {e}")
+            raise
+        except json.JSONDecodeError as e:
+            print(f"Failed to decode JSON response: {e}")
+            raise ValueError(f"Invalid JSON response: {e}")
+
+    def get_cards(self, set_id):
+        """
+        Retrieves a list of cards for a specific set from the Lorcast API.
+
+        Parameters:
+            set_id (str): The ID of the set to retrieve cards for.
+
+        Returns:
+            list: A list of cards in the specified set, each represented as a
+                dictionary with card details.
+        """
+        url = f"{self.api_url}/sets/{set_id}/cards"
+
+        # Check if set_id is provided
+        if not set_id:
+            raise ValueError("set_id must be provided to fetch cards.")
+
+        try:
+            response = self.session.get(url)
+            response.raise_for_status()  # Raise an exception for bad status codes
+
+            return response.json()
+        except requests.RequestException as e:
+            print(f"Request failed: {e}")
+            raise
+        except json.JSONDecodeError as e:
+            print(f"Failed to decode JSON response: {e}")
+            raise ValueError(f"Invalid JSON response: {e}")
+
+    def download_image(self, image_url, output_path):
+        """
+        Downloads an image from the specified URL and saves it to the given output path.
+
+        Parameters:
+            image_url (str): The URL of the image to download.
+            output_path (str): The file path where the image will be saved.
+        """
+        try:
+            response = self.session.get(image_url, stream=True)
+            response.raise_for_status()  # Raise an exception for bad status codes
+
+            with open(output_path, "wb") as f:
+                for chunk in response.iter_content(1024):
+                    f.write(chunk)
+            print(f"Image downloaded and saved to {output_path}")
+        except requests.RequestException as e:
+            print(f"Failed to download image: {e}")
+            raise
+        except IOError as e:
+            print(f"Failed to save image to {output_path}: {e}")
+            raise
