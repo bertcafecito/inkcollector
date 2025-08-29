@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2025-08-29
+
+### Added
+- **YAML Configuration Files**: Create `.inkcollector.yaml` files to save your settings
+- **Extraction Profiles**: Choose how you want to extract data:
+  - `complete`: Get everything (default)
+  - `images-only`: Just download card images
+  - `data-only`: Just save JSON data
+  - `preview`: View data without saving
+  - `high-quality`: Get large, high-quality images
+- **Workspaces**: Organize different projects with separate output folders
+- **New Commands**:
+  - `config init`: Create a sample config file
+  - `config show`: View your current settings
+  - `config list`: See all available profiles and workspaces
+- **New Options**:
+  - `--config`: Use a specific config file
+  - `--workspace`: Switch between workspaces
+  - `--profile`: Use a different extraction profile
+
+### Changed
+- CLI now uses configuration files to remember your preferences
+- Commands automatically use your workspace and profile settings
+- Added PyYAML dependency for config file support
+
 ## [1.0.0] - 2025-08-28
 
 ### Added

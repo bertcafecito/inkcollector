@@ -1,0 +1,128 @@
+/* Custom styles for Inkcollector documentation */
+
+/* Improve spacing and readability */
+.rst-content .section {
+    margin-bottom: 2rem;
+}
+
+/* Style feature lists with emojis */
+.rst-content .section ul li {
+    margin-bottom: 0.5rem;
+}
+
+/* Better code block styling */
+.rst-content .highlight {
+    margin-bottom: 1.5rem;
+}
+
+/* Style the navigation quick links */
+.rst-content .admonition {
+    border-radius: 4px;
+}
+
+/* Style command examples */
+.rst-content .literal {
+    background-color: #f8f9fa;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+/* Improve table readability */
+.rst-content table.docutils {
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+}
+
+.rst-content table.docutils th {
+    background-color: #f1f2f3;
+    border-bottom: 2px solid #e1e4e5;
+}
+
+/* Style option lists */
+.rst-content dl.option-list dt {
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+/* Better spacing for definition lists */
+.rst-content dl:not(.docutils) dt {
+    background: #f8f9fa;
+    border-left: 3px solid #2980b9;
+    padding: 6px 10px;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+.rst-content dl:not(.docutils) dd {
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Style version badges */
+.rst-content .versionadded,
+.rst-content .versionchanged,
+.rst-content .deprecated {
+    border-radius: 4px;
+    padding: 8px 12px;
+}
+
+/* Improve note and warning styling */
+.rst-content .note,
+.rst-content .warning,
+.rst-content .tip {
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Style the main title */
+.rst-content h1 {
+    border-bottom: 3px solid #2980b9;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Better section header styling */
+.rst-content h2 {
+    border-bottom: 1px solid #e1e4e5;
+    padding-bottom: 0.3rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+/* Emoji and icon improvements */
+.rst-content h2:before {
+    margin-right: 0.5rem;
+}
+
+/* Style the quick navigation section */
+.rst-content .section:first-of-type dl {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+/* Better link styling for navigation */
+.rst-content .section dt a.reference.internal {
+    font-weight: bold;
+    color: #2980b9;
+    text-decoration: none;
+}
+
+.rst-content .section dt a.reference.internal:hover {
+    text-decoration: underline;
+}
+
+/* Responsive improvements */
+@media screen and (max-width: 768px) {
+    .rst-content table.docutils {
+        font-size: 0.9rem;
+    }
+    
+    .rst-content .highlight pre {
+        font-size: 0.8rem;
+        overflow-x: auto;
+    }
+}
