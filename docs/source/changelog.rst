@@ -12,7 +12,22 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 [Unreleased]
 ============
 
-Nothing yet.
+Added
+-----
+
+**Bulk Collection Command:**
+- New ``lorcast get-all-sets`` command for automated bulk data collection
+- Automatically fetches all available sets and their complete card data
+- Supports all existing options: ``--json``, ``--save-json``, ``--get-images``
+- Built-in error handling - continues processing remaining sets if individual set fails
+- Progress tracking and comprehensive summary reporting
+- Ideal for initial setup, periodic synchronization, and research datasets
+
+**Documentation Updates:**
+- Added comprehensive CLI reference for ``get-all-sets`` command
+- Updated examples with bulk collection workflows and best practices
+- Enhanced quickstart guide with bulk collection scenarios
+- Added performance considerations and use case guidance
 
 [1.1.0] - 2025-01-15
 ====================

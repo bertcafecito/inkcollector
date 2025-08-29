@@ -43,6 +43,46 @@ Download everything for a specific set:
     inkcollector lorcast get-cards --set-id ROF --get-images
     inkcollector lorcast get-cards --set-id ITI --get-images
 
+Bulk Collection Operations
+-------------------------
+
+Automatically collect all available sets and their data in a single command:
+
+.. code-block:: shell
+
+    # Get all sets and their complete card data
+    inkcollector lorcast get-all-sets
+    
+    # Preview what would be collected (without saving)
+    inkcollector --profile preview lorcast get-all-sets --json
+    
+    # Complete bulk collection with images
+    inkcollector lorcast get-all-sets --get-images
+    
+    # High-quality bulk collection
+    inkcollector lorcast get-all-sets --save-json --get-images large
+
+**Use cases for bulk operations:**
+
+- **Initial setup**: Complete data collection for new projects
+- **Periodic sync**: Regular updates to keep data current  
+- **Research datasets**: Academic or analytical work requiring complete data
+- **Backup operations**: Creating comprehensive data archives
+- **Development environments**: Setting up complete test datasets
+
+**Performance considerations:**
+
+.. code-block:: shell
+
+    # For large operations, use a dedicated workspace
+    inkcollector --workspace bulk-collection lorcast get-all-sets --get-images
+    
+    # Monitor disk space before bulk image downloads
+    inkcollector --profile preview lorcast get-all-sets --json | grep card_count
+    
+    # Use smaller image sizes for faster bulk operations
+    inkcollector lorcast get-all-sets --get-images small
+
 Configuration-Based Workflows
 =============================
 
@@ -620,9 +660,22 @@ Scripting Examples
 Bash Automation
 ---------------
 
-Automate collection across multiple sets:
+The new ``get-all-sets`` command greatly simplifies bulk collection:
 
-**`collect-all-sets.sh`**:
+**Modern approach (recommended):**
+
+.. code-block:: bash
+
+    #!/bin/bash
+    
+    # Simple bulk collection with the new command
+    echo "Starting bulk collection..."
+    inkcollector lorcast get-all-sets --get-images
+    echo "Collection complete!"
+
+**Legacy approach (manual iteration):**
+
+If you need more control over individual set processing:
 
 .. code-block:: bash
 
@@ -637,10 +690,16 @@ Automate collection across multiple sets:
     
     echo "Found sets: $SET_IDS"
     
-    # Collect each set
+    # Collect each set with custom logic
     for set_id in $SET_IDS; do
         echo "Collecting set: $set_id"
-        inkcollector lorcast get-cards --set-id "$set_id" --get-images
+        
+        # Custom validation or processing per set
+        if inkcollector lorcast get-cards --set-id "$set_id" --get-images; then
+            echo "Successfully collected $set_id"
+        else
+            echo "Failed to collect $set_id, continuing..."
+        fi
         
         # Add delay to be nice to the API
         sleep 2
@@ -648,10 +707,43 @@ Automate collection across multiple sets:
     
     echo "Collection complete!"
 
+**Comparison:**
+
+.. list-table::
+   :widths: 30 35 35
+   :header-rows: 1
+
+   * - Feature
+     - ``get-all-sets``
+     - Manual Script
+   * - Simplicity
+     - Single command
+     - Multiple commands + scripting
+   * - Error handling
+     - Built-in (continues on failure)
+     - Manual implementation needed
+   * - Progress tracking
+     - Automatic
+     - Manual implementation needed
+   * - API rate limiting
+     - Built-in consideration
+     - Manual delays needed
+   * - Custom logic per set
+     - Not supported
+     - Full control
+   * - Resumability
+     - No (starts fresh)
+     - Can be implemented
+
 **Usage:**
 
 .. code-block:: shell
 
+    # Modern approach
+    chmod +x bulk-collect.sh
+    ./bulk-collect.sh
+    
+    # Legacy approach  
     chmod +x collect-all-sets.sh
     ./collect-all-sets.sh
 

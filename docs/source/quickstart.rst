@@ -81,6 +81,39 @@ This downloads:
 - Card images to ``images/lorcast/sets/TFC/``
 - Images are named like ``crd_001.jpg``, ``crd_002.jpg``, etc.
 
+Bulk Collection (All Sets at Once)
+----------------------------------
+
+For complete data collection, use the new bulk command:
+
+.. code-block:: shell
+
+    # Get ALL sets and their cards in one command
+    inkcollector lorcast get-all-sets
+
+This powerful command:
+
+- Fetches all available Disney Lorcana sets
+- For each set, gets all card data automatically  
+- Saves everything in an organized structure
+- Shows progress as it processes each set
+
+**With images:**
+
+.. code-block:: shell
+
+    # Get everything including all card images
+    inkcollector lorcast get-all-sets --get-images
+
+⚠️  **Note:** This downloads A LOT of data! Make sure you have sufficient disk space and time for this operation.
+
+**Preview first:**
+
+.. code-block:: shell
+
+    # See what sets would be processed (without downloading)
+    inkcollector --profile preview lorcast get-all-sets --json
+
 Understanding Profiles
 ======================
 
@@ -165,9 +198,23 @@ Common Workflows
 
 .. code-block:: shell
 
+    # Modern approach: bulk collection
+    inkcollector lorcast get-all-sets --get-images
+    
+    # Alternative: manual per-set collection
     inkcollector lorcast get-sets
     inkcollector lorcast get-cards --set-id TFC --get-images
     inkcollector lorcast get-cards --set-id ROF --get-images
+
+**Initial Setup** (recommended for new users):
+
+.. code-block:: shell
+
+    # Preview what's available
+    inkcollector --profile preview lorcast get-all-sets --json
+    
+    # Complete initial collection  
+    inkcollector lorcast get-all-sets --save-json --get-images
 
 Finding Set IDs
 ---------------

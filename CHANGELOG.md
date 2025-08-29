@@ -24,6 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Full override behavior**: Custom directories provide complete path control without forced subdirectories
   - **Cross-platform compatibility**: Works on Windows, macOS, and Linux
   - **Comprehensive testing**: 16 dedicated test cases ensuring reliability across all scenarios
+- **Bulk Collection Command**: 
+  - `lorcast get-all-sets`: Automatically fetch all available sets and their complete card data in a single operation
+  - Built-in error handling - continues processing remaining sets if individual set fails
+  - Progress tracking and comprehensive summary reporting
+  - Supports all existing options: `--json`, `--save-json`, `--get-images`
+  - Ideal for initial setup, periodic synchronization, research datasets, and backup operations
 - **New Commands**:
   - `config init`: Create a sample config file
   - `config show`: View your current settings

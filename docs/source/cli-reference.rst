@@ -401,6 +401,140 @@ Retrieve detailed card information for a specific set.
     Downloading images for 204 cards...
     Successfully downloaded 201 out of 204 card images.
 
+lorcast get-all-sets
+~~~~~~~~~~~~~~~~~~~~
+
+Automatically fetch all available sets and their complete card data in a single operation. This is a bulk command that combines ``get-sets`` and ``get-cards`` functionality.
+
+**Syntax:**
+
+.. code-block:: shell
+
+    inkcollector lorcast get-all-sets [OPTIONS]
+
+**Options:**
+
+.. option:: --json
+
+   Print JSON data to console with formatted output for both sets and cards.
+   
+   **Note:** Overrides profile's ``print_json`` setting.
+
+.. option:: --save-json
+
+   Save JSON data to configured data output directory.
+   
+   **Note:** Overrides profile's ``save_json`` setting.
+
+.. option:: --get-images [SIZE]
+
+   Download card images for all sets with specified size.
+   
+   **Choices:** ``small``, ``normal``, ``large``
+   
+   **Default:** ``normal`` (when flag is used without size)
+   
+   **Note:** Overrides profile's ``extract_images`` and ``image_size`` settings.
+
+**Behavior:**
+
+- Fetches all available sets from the Lorcast API
+- For each set, retrieves all card data automatically
+- Displays progress information for each set processed
+- Creates necessary directories automatically
+- Continues processing remaining sets if individual set fails
+- **Default mode:** 
+  - Saves sets data to ``{data_output_dir}/lorcast/sets.json``
+  - Saves each set's cards to ``{data_output_dir}/lorcast/sets/{set_id}.json``
+  - Saves images to ``{image_output_dir}/lorcast/sets/{set_id}/``
+- **Custom directory mode:** 
+  - When ``--output-dir`` is used, saves data directly without ``lorcast/`` subdirectories
+  - When ``--image-dir`` is used, saves images directly without ``lorcast/sets/{set_id}/`` subdirectories
+- Images named as ``crd_{card_id}.jpg``
+- Reports comprehensive download statistics at the end
+
+**Examples:**
+
+.. code-block:: shell
+
+    # Use profile defaults (most common usage)
+    inkcollector lorcast get-all-sets
+    
+    # Print all data to console
+    inkcollector lorcast get-all-sets --json
+    
+    # Save all data to files
+    inkcollector lorcast get-all-sets --save-json
+    
+    # Download all cards with normal-sized images
+    inkcollector lorcast get-all-sets --get-images
+    
+    # Download all cards with large-sized images
+    inkcollector lorcast get-all-sets --get-images large
+    
+    # Complete bulk collection: data + images
+    inkcollector lorcast get-all-sets --json --save-json --get-images normal
+    
+    # With custom workspace for organization
+    inkcollector --workspace complete-collection lorcast get-all-sets --get-images
+    
+    # Custom data directory (full override)
+    inkcollector --output-dir /bulk/data lorcast get-all-sets --save-json
+    
+    # Custom image directory (full override)  
+    inkcollector --image-dir /bulk/images lorcast get-all-sets --get-images
+    
+    # Both custom directories for bulk operation
+    inkcollector --output-dir /project/data --image-dir /project/images lorcast get-all-sets --save-json --get-images
+    
+    # Use with specific profile for bulk operations
+    inkcollector --profile complete lorcast get-all-sets
+
+**Output Example:**
+
+.. code-block:: text
+
+    ============================================================
+                    DISNEY LORCANA BULK COLLECTION            
+    ============================================================
+    Found 5 sets to process:
+    
+    Processing set 1/5: The First Chapter (TFC)...
+    Found 204 cards in set TFC
+    [Processing continues for each set...]
+    
+    Processing set 5/5: Shimmering Skies (SSK)...
+    Found 204 cards in set SSK
+    
+    ============================================================
+                        BULK OPERATION SUMMARY                
+    ============================================================
+    Successfully processed: 5/5 sets
+    Total cards collected: 1,020 cards
+    
+    [Image download summary if --get-images used:]
+    Image Download Summary:
+    - Successfully downloaded: 1,015/1,020 images
+    - Failed downloads: 5 images
+    - Success rate: 99.5%
+
+**Use Cases:**
+
+This command is ideal for:
+
+- Initial complete data collection
+- Periodic full synchronization
+- Research projects requiring complete datasets
+- Backup and archival operations
+- Setting up new development environments
+
+**Performance Considerations:**
+
+- This is a long-running operation that processes all available sets
+- Consider disk space requirements before downloading images for all sets
+- Use ``--profile preview`` first to see what sets will be processed
+- Network timeouts may occur with large image downloads
+
 Command Combinations
 ===================
 
