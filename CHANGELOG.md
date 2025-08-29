@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `preview`: View data without saving
   - `high-quality`: Get large, high-quality images
 - **Workspaces**: Organize different projects with separate output folders
+- **Custom Output Directory Paths**: Full control over where data and images are saved
+  - `--output-dir`: Specify custom directory for JSON data files (bypasses default `lorcast/` subdirectory structure)
+  - `--image-dir`: Specify custom directory for card images (bypasses default `lorcast/sets/{set-id}/` subdirectory structure)
+  - **Full override behavior**: Custom directories provide complete path control without forced subdirectories
+  - **Cross-platform compatibility**: Works on Windows, macOS, and Linux
+  - **Comprehensive testing**: 16 dedicated test cases ensuring reliability across all scenarios
 - **New Commands**:
   - `config init`: Create a sample config file
   - `config show`: View your current settings
@@ -26,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `--config`: Use a specific config file
   - `--workspace`: Switch between workspaces
   - `--profile`: Use a different extraction profile
+  - `--output-dir`: Override default data output directory
+  - `--image-dir`: Override default image output directory
 
 ### Changed
 - CLI now uses configuration files to remember your preferences

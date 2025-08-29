@@ -35,6 +35,26 @@ These options can be used with any command:
    
    **Example:** ``inkcollector --profile preview lorcast get-sets``
 
+.. option:: --output-dir PATH
+
+   Override default data output directory.
+   
+   **Behavior:** Provides complete path control, bypassing default ``lorcast/`` subdirectory structure
+   
+   **Default:** Uses workspace's ``data_output_dir`` with ``lorcast/`` subdirectories
+   
+   **Example:** ``inkcollector --output-dir /custom/data lorcast get-sets``
+
+.. option:: --image-dir PATH
+
+   Override default image output directory.
+   
+   **Behavior:** Provides complete path control, bypassing default ``lorcast/sets/{set-id}/`` subdirectory structure
+   
+   **Default:** Uses workspace's ``image_output_dir`` with ``lorcast/sets/{set-id}/`` subdirectories
+   
+   **Example:** ``inkcollector --image-dir /custom/images lorcast get-cards --set-id TFC --get-images``
+
 .. option:: -v, --version
 
    Display the version of Inkcollector.
@@ -71,6 +91,9 @@ Main entry point for all commands.
     
     # Use with global options
     inkcollector --config my-config.yaml --workspace dev lorcast get-sets
+    
+    # Custom output directories
+    inkcollector --output-dir /project/data --image-dir /project/images lorcast get-cards --set-id TFC --save-json --get-images
 
 Configuration Commands
 =====================
@@ -232,7 +255,8 @@ Retrieve all available Disney Lorcana card sets.
 - Fetches all available sets from Lorcast API
 - Displays number of sets found
 - Creates necessary directories automatically
-- Saves to ``{data_output_dir}/lorcast/sets.json``
+- **Default mode:** Saves to ``{data_output_dir}/lorcast/sets.json``
+- **Custom directory mode:** When ``--output-dir`` is used, saves directly to ``{output_dir}/sets.json`` (bypasses ``lorcast/`` subdirectory)
 
 **Examples:**
 
@@ -252,6 +276,12 @@ Retrieve all available Disney Lorcana card sets.
     
     # With custom profile
     inkcollector --profile preview lorcast get-sets
+    
+    # Save to custom directory (full override)
+    inkcollector --output-dir /my/custom/path lorcast get-sets --save-json
+    
+    # Custom directory with other options
+    inkcollector --output-dir /project/data --profile complete lorcast get-sets
 
 **Output Example:**
 
@@ -313,8 +343,10 @@ Retrieve detailed card information for a specific set.
 - Retrieves all cards for the specified set
 - Displays number of cards found
 - Creates necessary directories automatically
-- Saves data to ``{data_output_dir}/lorcast/sets/{set_id}.json``
-- Saves images to ``{image_output_dir}/lorcast/sets/{set_id}/``
+- **Default mode:** Saves data to ``{data_output_dir}/lorcast/sets/{set_id}.json``
+- **Custom data directory mode:** When ``--output-dir`` is used, saves data directly to ``{output_dir}/{set_id}.json`` (bypasses ``lorcast/sets/`` subdirectory)
+- **Default mode:** Saves images to ``{image_output_dir}/lorcast/sets/{set_id}/``
+- **Custom image directory mode:** When ``--image-dir`` is used, saves images directly to ``{image_dir}/`` (bypasses ``lorcast/sets/{set_id}/`` subdirectory)
 - Images named as ``crd_{card_id}.jpg``
 - Reports download success/failure statistics
 
@@ -342,6 +374,18 @@ Retrieve detailed card information for a specific set.
     
     # With custom workspace
     inkcollector --workspace archive lorcast get-cards --set-id TFC --get-images
+    
+    # Custom data directory (full override)
+    inkcollector --output-dir /project/cards lorcast get-cards --set-id TFC --save-json
+    
+    # Custom image directory (full override)
+    inkcollector --image-dir /project/images lorcast get-cards --set-id TFC --get-images
+    
+    # Both custom directories
+    inkcollector --output-dir /project/data --image-dir /project/images lorcast get-cards --set-id TFC --save-json --get-images
+    
+    # Mix custom directories with profiles
+    inkcollector --output-dir /backup/data --profile complete lorcast get-cards --set-id TFC
 
 **Output Example:**
 
@@ -372,6 +416,39 @@ Global options override profile settings:
     
     # Profile says extract_images=false, but --get-images overrides it
     inkcollector --profile data-only lorcast get-cards --set-id TFC --get-images
+
+Custom Directory Override Behavior
+----------------------------------
+
+Custom directory flags provide complete path control:
+
+.. code-block:: shell
+
+    # Default behavior: uses lorcast/ subdirectories
+    inkcollector lorcast get-sets --save-json
+    # → Saves to: {workspace.data_output_dir}/lorcast/sets.json
+    
+    # Custom directory: full override, no subdirectories
+    inkcollector --output-dir /my/data lorcast get-sets --save-json
+    # → Saves to: /my/data/sets.json
+    
+    # Default behavior: uses lorcast/sets/{set-id}/ subdirectories
+    inkcollector lorcast get-cards --set-id TFC --get-images
+    # → Saves to: {workspace.image_output_dir}/lorcast/sets/TFC/
+    
+    # Custom directory: full override, no subdirectories
+    inkcollector --image-dir /my/images lorcast get-cards --set-id TFC --get-images
+    # → Saves to: /my/images/
+
+Custom directories can be mixed with other options:
+
+.. code-block:: shell
+
+    # Custom data directory with workspace
+    inkcollector --workspace research --output-dir /backup/data lorcast get-sets --save-json
+    
+    # Custom directories with profiles
+    inkcollector --output-dir /project/data --image-dir /project/images --profile complete lorcast get-cards --set-id TFC
 
 Multiple Workspaces
 -------------------

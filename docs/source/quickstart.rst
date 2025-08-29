@@ -181,6 +181,28 @@ To find available set IDs:
 
 Look for the ``id`` field in each set (like ``TFC``, ``ROF``, etc.).
 
+Custom Directory Control
+========================
+
+For complete control over where files are saved, use custom directory flags:
+
+.. code-block:: shell
+
+    # Default: uses workspace structure with lorcast/ subdirectories
+    inkcollector lorcast get-sets --save-json
+    # → Saves to: data/lorcast/sets.json
+    
+    # Custom: full path control, no subdirectories
+    inkcollector --output-dir /my/project/data lorcast get-sets --save-json
+    # → Saves to: /my/project/data/sets.json
+    
+    # Custom directories for both data and images
+    inkcollector --output-dir /project/cards --image-dir /project/images lorcast get-cards --set-id TFC --save-json --get-images
+    # → Data: /project/cards/TFC.json
+    # → Images: /project/images/crd_*.jpg
+
+This bypasses the default ``lorcast/`` subdirectory structure and gives you complete control over file placement.
+
 Next Steps
 ==========
 
