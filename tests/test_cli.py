@@ -135,6 +135,25 @@ class TestInkcollectorCLI:
         )
         assert args.get_images == "large"
 
+    def test_parser_lorcast_get_all_sets_arguments(self, cli):
+        """Test lorcast get-all-sets command arguments."""
+        # Test basic command
+        args = cli.parser.parse_args(["lorcast", "get-all-sets"])
+        assert args.command == "lorcast"
+        assert args.lorcast_command == "get-all-sets"
+        assert args.json is False
+        assert args.save_json is False
+        assert args.get_images is None
+
+        # Test with all options
+        args = cli.parser.parse_args([
+            "lorcast", "get-all-sets",
+            "--json", "--save-json", "--get-images", "large"
+        ])
+        assert args.json is True
+        assert args.save_json is True
+        assert args.get_images == "large"
+
     def test_parser_requires_set_id_for_get_cards(self, cli):
         """Test that get-cards command requires set-id argument."""
         with pytest.raises(SystemExit):
@@ -184,6 +203,26 @@ class TestInkcollectorCLI:
         )
 
         with patch.object(cli, "_handle_get_cards_command") as mock_handle:
+            cli.handle_lorcast_command(args)
+
+        mock_lorcast_class.assert_called_once()
+        mock_handle.assert_called_once_with(mock_lorcast, args)
+
+    @patch("inkcollector.cli.LorcastAPI")
+    def test_handle_lorcast_command_get_all_sets(self, mock_lorcast_class, cli):
+        """Test lorcast get-all-sets command handling."""
+        mock_lorcast = Mock()
+        mock_lorcast_class.return_value = mock_lorcast
+
+        args = argparse.Namespace(
+            command="lorcast",
+            lorcast_command="get-all-sets",
+            json=False,
+            save_json=True,
+            get_images=None,
+        )
+
+        with patch.object(cli, "_handle_get_all_sets_command") as mock_handle:
             cli.handle_lorcast_command(args)
 
         mock_lorcast_class.assert_called_once()

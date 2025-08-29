@@ -519,7 +519,9 @@ class InkcollectorCLI:
             if hasattr(args, "save_json") and args.save_json
             else (profile.save_json and profile.extract_data)
         )
-        should_download_images = args.get_images is not None or (
+        should_download_images = (
+            hasattr(args, "get_images") and args.get_images is not None
+        ) or (
             profile.extract_images and not hasattr(args, "get_images")
         )
 
