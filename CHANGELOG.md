@@ -16,14 +16,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Comprehensive Testing Suite**: Implemented pytest configuration with coverage reporting.
 - **Code Quality Tools**: Added linting and testing to CI workflow.
 - **Development Dependencies**: Added black, isort, flake8, pytest, and coverage tools.
+- **YAML Issue Templates**: Replaced markdown issue templates with structured YAML forms for better issue reporting.
+- **Comprehensive CLI Documentation**: Added detailed documentation for the Inkcollector CLI tool, including features, installation, usage, and examples.
+- **AI Assistance Acknowledgment**: Added acknowledgment of AI assistance in development with emphasis on manual review.
 
 ### Changed
 - **Major CLI Refactor**: Switched to class-based CLI architecture using argparse.
 - **Enhanced Lorcast Commands**: Refactored lorcast get-set subcommand for improved functionality.
 - **Project Structure**: Reorganized codebase for better maintainability.
+- **CLI Improvements**: Enhanced CLI tool with better error messages, improved argument parsing, and enhanced data collection capabilities.
+- **Documentation Format**: Migrated README from RST to Markdown format for better compatibility and readability.
+- **Code Quality**: Improved error handling, Unicode character support, and file operation error handling.
+- **Test Coverage**: Enhanced test cases for CLI functionality with better coverage.
 
 ### Removed
 - **Legacy CLI Code**: Removed outdated CLI and example code.
+- **Development Container**: Removed VSCode development container configuration.
+- **Legacy README**: Removed RST format README file in favor of Markdown.
 
 ### Updated
 - **Version Bump**: Updated to version 1.0.0 marking stable release.
