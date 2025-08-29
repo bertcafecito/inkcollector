@@ -7,12 +7,11 @@ and error handling scenarios.
 """
 
 import argparse
-import json
 import os
 import tempfile
+from unittest.mock import Mock, call, mock_open, patch
+
 import pytest
-from unittest.mock import Mock, patch, call, mock_open
-from io import StringIO
 
 from inkcollector.cli import InkcollectorCLI, main
 from inkcollector.lorcast import LorcastAPI
@@ -149,7 +148,8 @@ class TestInkcollectorCLI:
             cli.handle_lorcast_command(args)
 
         mock_print.assert_called_once_with(
-            "Lorcast command is under development. Use --help to see available subcommands."
+            "Lorcast command is under development. "
+            "Use --help to see available subcommands."
         )
 
     @patch("inkcollector.cli.LorcastAPI")
@@ -344,7 +344,7 @@ class TestInkcollectorCLI:
 
         with (
             patch.object(cli, "_create_directory_if_not_exists") as mock_create_dir,
-            patch("builtins.print") as mock_print,
+            patch("builtins.print"),
         ):
 
             cli._save_sets_to_file(mock_sets)
@@ -371,7 +371,9 @@ class TestInkcollectorCLI:
             cli._save_sets_to_file(mock_sets)
 
             mock_print.assert_any_call(
-                f"Error saving sets data to {os.path.join(cli.data_output_dir, cli.LORCAST_DATASOURCE_DIR, 'sets.json')}: File error"
+                f"Error saving sets data to "
+                f"{os.path.join(cli.data_output_dir, cli.LORCAST_DATASOURCE_DIR, 'sets.json')}: "  # noqa: E501
+                "File error"
             )
 
     @patch("builtins.open", new_callable=mock_open)
@@ -383,7 +385,7 @@ class TestInkcollectorCLI:
 
         with (
             patch.object(cli, "_create_directory_if_not_exists") as mock_create_dir,
-            patch("builtins.print") as mock_print,
+            patch("builtins.print"),
         ):
 
             cli._save_cards_to_file(mock_cards, set_id)
@@ -611,7 +613,7 @@ class TestIntegration:
         mock_lorcast.get_sets.assert_called_once()
 
         # Check that directory structure would be created
-        expected_dir = os.path.join(temp_dir, cli.LORCAST_DATASOURCE_DIR)
+        # expected_dir = os.path.join(temp_dir, cli.LORCAST_DATASOURCE_DIR)
         # We can't easily test file creation due to mocking, but we can verify the flow
 
     @pytest.fixture

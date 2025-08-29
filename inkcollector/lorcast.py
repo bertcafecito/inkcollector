@@ -1,10 +1,12 @@
 import json
+
 import requests
 
 
 class LorcastAPI:
     """
-    A class to interact with the Lorcast API for collecting data on the Lorcana Trading Card Game.
+    A class to interact with the Lorcast API for collecting data on the
+    Lorcana Trading Card Game.
 
     This class provides methods to retrieve data from the API.
     """
@@ -86,7 +88,8 @@ class LorcastAPI:
             set_id (str): The ID of the set to retrieve cards for.
 
         Returns:
-            list: A list of cards in the specified set, each represented as a dictionary with card details.
+            list: A list of cards in the specified set, each represented as a
+                dictionary with card details.
         """
         url = f"{self.api_url}/sets/{set_id}/cards"
 

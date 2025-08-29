@@ -5,11 +5,10 @@ This module tests the argument parsing, help functionality, and command-line
 interface behavior of the inkcollector CLI.
 """
 
-import pytest
-import sys
 from io import StringIO
 from unittest.mock import patch
-from argparse import ArgumentError
+
+import pytest
 
 from inkcollector.cli import InkcollectorCLI
 
@@ -313,7 +312,10 @@ class TestCommandLineInterface:
 
     def test_parser_description(self, cli):
         """Test that parser has correct description."""
-        expected_desc = "Inkcollector is a CLI tool for collecting data about the disney lorcana trading card game."
+        expected_desc = (
+            "Inkcollector is a CLI tool for collecting data about the "
+            "disney lorcana trading card game."
+        )
         assert expected_desc in cli.parser.description
 
     def test_subcommand_structure(self, cli):
@@ -366,7 +368,8 @@ class TestCommandLineInterface:
 
     def test_mutual_exclusivity_scenarios(self, cli):
         """Test scenarios that might involve mutual exclusivity (if any)."""
-        # Currently no mutually exclusive groups, but test that multiple flags work together
+        # Currently no mutually exclusive groups, but test that multiple flags
+        # work together
         args = cli.parser.parse_args(["lorcast", "get-sets", "--json", "--save-json"])
         assert args.json and args.save_json  # Both should be allowed
 

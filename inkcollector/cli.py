@@ -1,7 +1,7 @@
 import argparse
 import json
 import os
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 
 from inkcollector import __version__
 from inkcollector.lorcast import LorcastAPI
@@ -47,7 +47,10 @@ class InkcollectorCLI:
         """Set up the argument parser and subcommands."""
         self.parser = argparse.ArgumentParser(
             prog="inkcollector",
-            description="Inkcollector is a CLI tool for collecting data about the disney lorcana trading card game.",
+            description=(
+                "Inkcollector is a CLI tool for collecting data about the "
+                "disney lorcana trading card game."
+            ),
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
 
@@ -105,7 +108,10 @@ class InkcollectorCLI:
             choices=["small", "normal", "large"],
             const="normal",
             default=None,
-            help="Download card images with specified size (choices: small, normal, large; default: normal)",
+            help=(
+                "Download card images with specified size "
+                "(choices: small, normal, large; default: normal)"
+            ),
         )
 
     def handle_lorcast_command(self, args: argparse.Namespace) -> None:
@@ -116,7 +122,8 @@ class InkcollectorCLI:
         """
         if not hasattr(args, "lorcast_command") or not args.lorcast_command:
             print(
-                "Lorcast command is under development. Use --help to see available subcommands."
+                "Lorcast command is under development. "
+                "Use --help to see available subcommands."
             )
             return
 
@@ -274,7 +281,8 @@ class InkcollectorCLI:
                 successful_downloads += 1
 
         print(
-            f"Successfully downloaded {successful_downloads} out of {len(cards)} card images."
+            f"Successfully downloaded {successful_downloads} out of "
+            f"{len(cards)} card images."
         )
 
     def _download_single_card_image(
@@ -302,21 +310,25 @@ class InkcollectorCLI:
 
         image_uris = card.get("image_uris")
         if not image_uris:
-            print(f"No image URIs found for card {card_id}, skipping image download.")
+            print(
+                f"No image URIs found for card {card_id}, " "skipping image download."
+            )
             return False
 
         # Navigate through the nested structure safely
         digital_uris = image_uris.get("digital")
         if not digital_uris:
             print(
-                f"No digital image URIs found for card {card_id}, skipping image download."
+                f"No digital image URIs found for card {card_id}, "
+                "skipping image download."
             )
             return False
 
         image_uri = digital_uris.get(image_size)
         if not image_uri:
             print(
-                f"No {image_size} image URI found for card {card_id}, skipping image download."
+                f"No {image_size} image URI found for card {card_id}, "
+                "skipping image download."
             )
             return False
 

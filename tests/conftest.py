@@ -4,10 +4,11 @@ Test fixtures and conftest for inkcollector tests.
 This module provides common fixtures and configuration for all tests.
 """
 
-import pytest
 import tempfile
-import os
 from unittest.mock import Mock
+
+import pytest
+
 from inkcollector.lorcast import LorcastAPI
 
 

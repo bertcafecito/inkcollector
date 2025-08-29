@@ -5,11 +5,11 @@ This module tests various error conditions, edge cases, and error handling
 in the inkcollector CLI.
 """
 
-import pytest
-import json
 import os
-from unittest.mock import Mock, patch, mock_open
-from requests.exceptions import RequestException, ConnectionError, Timeout
+from unittest.mock import Mock, mock_open, patch
+
+import pytest
+from requests.exceptions import ConnectionError, Timeout
 
 from inkcollector.cli import InkcollectorCLI
 
@@ -111,7 +111,9 @@ class TestErrorScenarios:
             cli_with_temp_dirs._save_sets_to_file(mock_sets)
 
             mock_print.assert_any_call(
-                f"Error saving sets data to {os.path.join(cli_with_temp_dirs.data_output_dir, cli_with_temp_dirs.LORCAST_DATASOURCE_DIR, 'sets.json')}: Permission denied"
+                f"Error saving sets data to "
+                f"{os.path.join(cli_with_temp_dirs.data_output_dir, cli_with_temp_dirs.LORCAST_DATASOURCE_DIR, 'sets.json')}: "  # noqa: E501
+                "Permission denied"
             )
 
     def test_directory_creation_error(self, cli_with_temp_dirs):
