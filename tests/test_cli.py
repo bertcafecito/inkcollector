@@ -146,10 +146,16 @@ class TestInkcollectorCLI:
         assert args.get_images is None
 
         # Test with all options
-        args = cli.parser.parse_args([
-            "lorcast", "get-all-sets",
-            "--json", "--save-json", "--get-images", "large"
-        ])
+        args = cli.parser.parse_args(
+            [
+                "lorcast",
+                "get-all-sets",
+                "--json",
+                "--save-json",
+                "--get-images",
+                "large",
+            ]
+        )
         assert args.json is True
         assert args.save_json is True
         assert args.get_images == "large"

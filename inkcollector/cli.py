@@ -497,10 +497,10 @@ class InkcollectorCLI:
             args: Parsed command line arguments
         """
         print("Fetching all sets and their cards...")
-        
+
         # First, get all sets
         sets = lorcast.get_sets()
-        
+
         if not sets:
             print("No sets found.")
             return
@@ -521,9 +521,7 @@ class InkcollectorCLI:
         )
         should_download_images = (
             hasattr(args, "get_images") and args.get_images is not None
-        ) or (
-            profile.extract_images and not hasattr(args, "get_images")
-        )
+        ) or (profile.extract_images and not hasattr(args, "get_images"))
 
         # Determine image size
         if hasattr(args, "get_images") and args.get_images:
@@ -544,25 +542,25 @@ class InkcollectorCLI:
         # Process each set to get cards
         total_cards = 0
         successful_image_downloads = 0
-        
+
         for i, set_data in enumerate(sets, 1):
             set_id = set_data.get("id")
             set_name = set_data.get("name", "Unknown")
-            
+
             if not set_id:
                 print(f"Set {i} has no ID, skipping...")
                 continue
-                
+
             print(f"\nProcessing set {i}/{len(sets)}: {set_name} (ID: {set_id})")
-            
+
             try:
                 # Get cards for this set
                 cards = lorcast.get_cards(set_id)
-                
+
                 if not cards:
                     print(f"No cards found for set {set_id}")
                     continue
-                    
+
                 print(f"Found {len(cards)} cards for set {set_id}")
                 total_cards += len(cards)
 
@@ -591,7 +589,7 @@ class InkcollectorCLI:
         print(f"{'=' * 60}")
         print(f"Processed {len(sets)} sets")
         print(f"Total cards extracted: {total_cards}")
-        
+
         if should_download_images:
             print(f"Total images downloaded: {successful_image_downloads}")
 
@@ -609,7 +607,7 @@ class InkcollectorCLI:
             cards: List of card data dictionaries
             set_id: ID of the set
             image_size: Size of the image to download ('small', 'normal', 'large')
-            
+
         Returns:
             Number of successful downloads
         """

@@ -9,12 +9,11 @@ and all output options (JSON, save, images).
 import argparse
 import os
 import tempfile
-from unittest.mock import Mock, call, patch
+from unittest.mock import Mock, patch
 
 import pytest
 
 from inkcollector.cli import InkcollectorCLI
-from inkcollector.lorcast import LorcastAPI
 
 
 class TestGetAllSetsCommand:
@@ -66,24 +65,40 @@ class TestGetAllSetsCommand:
         assert args.get_images == "normal"
 
         # Test with --get-images flag with specific size
-        args = cli.parser.parse_args(["lorcast", "get-all-sets", "--get-images", "large"])
+        args = cli.parser.parse_args(
+            ["lorcast", "get-all-sets", "--get-images", "large"]
+        )
         assert args.get_images == "large"
 
         # Test with custom directories
-        args = cli.parser.parse_args([
-            "lorcast", "get-all-sets", 
-            "--output-dir", "custom_data",
-            "--image-dir", "custom_images"
-        ])
+        args = cli.parser.parse_args(
+            [
+                "lorcast",
+                "get-all-sets",
+                "--output-dir",
+                "custom_data",
+                "--image-dir",
+                "custom_images",
+            ]
+        )
         assert args.output_dir == "custom_data"
         assert args.image_dir == "custom_images"
 
         # Test with all options combined
-        args = cli.parser.parse_args([
-            "lorcast", "get-all-sets",
-            "--json", "--save-json", "--get-images", "small",
-            "--output-dir", "test_data", "--image-dir", "test_images"
-        ])
+        args = cli.parser.parse_args(
+            [
+                "lorcast",
+                "get-all-sets",
+                "--json",
+                "--save-json",
+                "--get-images",
+                "small",
+                "--output-dir",
+                "test_data",
+                "--image-dir",
+                "test_images",
+            ]
+        )
         assert args.json is True
         assert args.save_json is True
         assert args.get_images == "small"
@@ -94,15 +109,21 @@ class TestGetAllSetsCommand:
         """Test that get-images argument only accepts valid choices."""
         # Valid choices should work
         for size in ["small", "normal", "large"]:
-            args = cli.parser.parse_args(["lorcast", "get-all-sets", "--get-images", size])
+            args = cli.parser.parse_args(
+                ["lorcast", "get-all-sets", "--get-images", size]
+            )
             assert args.get_images == size
 
         # Invalid choice should raise SystemExit
         with pytest.raises(SystemExit):
-            cli.parser.parse_args(["lorcast", "get-all-sets", "--get-images", "invalid"])
+            cli.parser.parse_args(
+                ["lorcast", "get-all-sets", "--get-images", "invalid"]
+            )
 
     @patch("inkcollector.cli.LorcastAPI")
-    def test_handle_lorcast_command_routes_to_get_all_sets(self, mock_lorcast_class, cli):
+    def test_handle_lorcast_command_routes_to_get_all_sets(
+        self, mock_lorcast_class, cli
+    ):
         """Test that lorcast command routes get-all-sets to the correct handler."""
         mock_lorcast = Mock()
         mock_lorcast_class.return_value = mock_lorcast
@@ -129,42 +150,32 @@ class TestGetAllSetsCommand:
             get_images=None,
         )
 
-        with patch("builtins.print") as mock_print, \
-             patch.object(cli, "_save_sets_to_file") as mock_save_sets, \
-             patch.object(cli, "_save_cards_to_file") as mock_save_cards, \
-             patch.object(cli, "_get_effective_profile") as mock_profile:
-            
+        with (
+            patch("builtins.print") as mock_print,
+            patch.object(cli, "_save_sets_to_file") as mock_save_sets,
+            patch.object(cli, "_save_cards_to_file") as mock_save_cards,
+            patch.object(cli, "_get_effective_profile") as mock_profile,
+        ):
+
             # Mock profile to return basic settings
             mock_profile.return_value = Mock(
                 print_json=False,
                 save_json=True,
                 extract_data=True,
                 extract_images=False,
-                image_size="normal"
+                image_size="normal",
             )
-            
+
             cli._handle_get_all_sets_command(mock_lorcast_api, args)
 
         # Verify API calls
         mock_lorcast_api.get_sets.assert_called_once()
         assert mock_lorcast_api.get_cards.call_count == 3  # 3 sets
 
-        # Verify print output
-        expected_print_calls = [
-            call("Fetching all sets and their cards..."),
-            call("Found 3 sets."),
-            call("\nProcessing set 1/3: First Set (ID: set1)"),
-            call("Found 2 cards for set set1"),
-            call("\nProcessing set 2/3: Second Set (ID: set2)"),
-            call("Found 1 cards for set set2"),
-            call("\nProcessing set 3/3: Third Set (ID: set3)"),
-            call("Found 3 cards for set set3"),
-        ]
-        
         # Check some key print calls (order might vary due to summary)
         mock_print.assert_any_call("Fetching all sets and their cards...")
         mock_print.assert_any_call("Found 3 sets.")
-        
+
         # Verify file saves
         mock_save_sets.assert_called_once()
         assert mock_save_cards.call_count == 3  # One for each set
@@ -189,18 +200,20 @@ class TestGetAllSetsCommand:
             get_images=None,
         )
 
-        with patch.object(cli, "_print_sets_json") as mock_print_sets, \
-             patch.object(cli, "_print_cards_json") as mock_print_cards, \
-             patch.object(cli, "_get_effective_profile") as mock_profile:
-            
+        with (
+            patch.object(cli, "_print_sets_json") as mock_print_sets,
+            patch.object(cli, "_print_cards_json") as mock_print_cards,
+            patch.object(cli, "_get_effective_profile") as mock_profile,
+        ):
+
             mock_profile.return_value = Mock(
                 print_json=True,
                 save_json=False,
                 extract_data=True,
                 extract_images=False,
-                image_size="normal"
+                image_size="normal",
             )
-            
+
             cli._handle_get_all_sets_command(mock_lorcast_api, args)
 
         # Verify JSON printing
@@ -215,21 +228,23 @@ class TestGetAllSetsCommand:
             get_images="large",
         )
 
-        with patch.object(cli, "_download_card_images_bulk") as mock_download, \
-             patch.object(cli, "_get_effective_profile") as mock_profile, \
-             patch("builtins.print"):
-            
+        with (
+            patch.object(cli, "_download_card_images_bulk") as mock_download,
+            patch.object(cli, "_get_effective_profile") as mock_profile,
+            patch("builtins.print"),
+        ):
+
             mock_profile.return_value = Mock(
                 print_json=False,
                 save_json=False,
                 extract_data=True,
                 extract_images=True,
-                image_size="normal"
+                image_size="normal",
             )
-            
+
             # Mock successful downloads
             mock_download.return_value = 2  # 2 successful downloads per set
-            
+
             cli._handle_get_all_sets_command(mock_lorcast_api, args)
 
         # Verify image downloads for all sets
@@ -246,17 +261,19 @@ class TestGetAllSetsCommand:
 
         args = argparse.Namespace(json=False, save_json=False, get_images=None)
 
-        with patch("builtins.print") as mock_print, \
-             patch.object(cli, "_get_effective_profile") as mock_profile:
-            
+        with (
+            patch("builtins.print") as mock_print,
+            patch.object(cli, "_get_effective_profile") as mock_profile,
+        ):
+
             mock_profile.return_value = Mock(
                 print_json=False,
                 save_json=False,
                 extract_data=True,
                 extract_images=False,
-                image_size="normal"
+                image_size="normal",
             )
-            
+
             cli._handle_get_all_sets_command(mock_lorcast_api, args)
 
         # Should skip the set without ID
@@ -266,6 +283,7 @@ class TestGetAllSetsCommand:
 
     def test_handle_get_all_sets_command_api_error(self, cli, mock_lorcast_api):
         """Test get-all-sets command handles API errors gracefully."""
+
         # Mock get_cards to raise an exception for one set
         def mock_get_cards_with_error(set_id):
             if set_id == "set2":
@@ -276,17 +294,19 @@ class TestGetAllSetsCommand:
 
         args = argparse.Namespace(json=False, save_json=False, get_images=None)
 
-        with patch("builtins.print") as mock_print, \
-             patch.object(cli, "_get_effective_profile") as mock_profile:
-            
+        with (
+            patch("builtins.print") as mock_print,
+            patch.object(cli, "_get_effective_profile") as mock_profile,
+        ):
+
             mock_profile.return_value = Mock(
                 print_json=False,
                 save_json=False,
                 extract_data=True,
                 extract_images=False,
-                image_size="normal"
+                image_size="normal",
             )
-            
+
             cli._handle_get_all_sets_command(mock_lorcast_api, args)
 
         # Should print error message and continue
@@ -294,28 +314,30 @@ class TestGetAllSetsCommand:
 
     def test_handle_get_all_sets_command_empty_set(self, cli, mock_lorcast_api):
         """Test get-all-sets command handles empty sets."""
+
         # Mock one set to return no cards
         def mock_get_cards_empty(set_id):
             if set_id == "set2":
                 return []
             return mock_lorcast_api.get_cards.side_effect(set_id)
 
-        original_side_effect = mock_lorcast_api.get_cards.side_effect
         mock_lorcast_api.get_cards.side_effect = mock_get_cards_empty
 
         args = argparse.Namespace(json=False, save_json=False, get_images=None)
 
-        with patch("builtins.print") as mock_print, \
-             patch.object(cli, "_get_effective_profile") as mock_profile:
-            
+        with (
+            patch("builtins.print") as mock_print,
+            patch.object(cli, "_get_effective_profile") as mock_profile,
+        ):
+
             mock_profile.return_value = Mock(
                 print_json=False,
                 save_json=False,
                 extract_data=True,
                 extract_images=False,
-                image_size="normal"
+                image_size="normal",
             )
-            
+
             cli._handle_get_all_sets_command(mock_lorcast_api, args)
 
         # Should handle empty set gracefully
@@ -324,18 +346,27 @@ class TestGetAllSetsCommand:
     def test_download_card_images_bulk_success(self, cli, mock_lorcast_api):
         """Test bulk image download functionality."""
         cards = [
-            {"id": "card1", "image_uris": {"digital": {"normal": "http://example.com/1.jpg"}}},
-            {"id": "card2", "image_uris": {"digital": {"normal": "http://example.com/2.jpg"}}},
+            {
+                "id": "card1",
+                "image_uris": {"digital": {"normal": "http://example.com/1.jpg"}},
+            },
+            {
+                "id": "card2",
+                "image_uris": {"digital": {"normal": "http://example.com/2.jpg"}},
+            },
         ]
 
-        with patch.object(cli, "_download_single_card_image") as mock_download_single, \
-             patch.object(cli, "_create_directory_if_not_exists") as mock_create_dir, \
-             patch("builtins.print") as mock_print:
-            
+        with (
+            patch.object(cli, "_download_single_card_image") as mock_download_single,
+            patch("builtins.print") as mock_print,
+        ):
+
             # Mock successful downloads
             mock_download_single.return_value = True
-            
-            result = cli._download_card_images_bulk(mock_lorcast_api, cards, "test_set", "normal")
+
+            result = cli._download_card_images_bulk(
+                mock_lorcast_api, cards, "test_set", "normal"
+            )
 
         assert result == 2  # Both downloads successful
         assert mock_download_single.call_count == 2
@@ -344,18 +375,27 @@ class TestGetAllSetsCommand:
     def test_download_card_images_bulk_partial_success(self, cli, mock_lorcast_api):
         """Test bulk image download with some failures."""
         cards = [
-            {"id": "card1", "image_uris": {"digital": {"normal": "http://example.com/1.jpg"}}},
-            {"id": "card2", "image_uris": {"digital": {"normal": "http://example.com/2.jpg"}}},
+            {
+                "id": "card1",
+                "image_uris": {"digital": {"normal": "http://example.com/1.jpg"}},
+            },
+            {
+                "id": "card2",
+                "image_uris": {"digital": {"normal": "http://example.com/2.jpg"}},
+            },
         ]
 
-        with patch.object(cli, "_download_single_card_image") as mock_download_single, \
-             patch.object(cli, "_create_directory_if_not_exists") as mock_create_dir, \
-             patch("builtins.print") as mock_print:
-            
+        with (
+            patch.object(cli, "_download_single_card_image") as mock_download_single,
+            patch("builtins.print") as mock_print,
+        ):
+
             # Mock one success, one failure
             mock_download_single.side_effect = [True, False]
-            
-            result = cli._download_card_images_bulk(mock_lorcast_api, cards, "test_set", "normal")
+
+            result = cli._download_card_images_bulk(
+                mock_lorcast_api, cards, "test_set", "normal"
+            )
 
         assert result == 1  # Only one download successful
         mock_print.assert_any_call("  Successfully downloaded 1/2 images")
@@ -364,14 +404,23 @@ class TestGetAllSetsCommand:
         """Test bulk image download with custom directory."""
         cli.using_custom_image_dir = True
         cli.image_output_dir = "/custom/images"
-        
-        cards = [{"id": "card1", "image_uris": {"digital": {"normal": "http://example.com/1.jpg"}}}]
 
-        with patch.object(cli, "_download_single_card_image") as mock_download_single, \
-             patch("builtins.print"):
-            
+        cards = [
+            {
+                "id": "card1",
+                "image_uris": {"digital": {"normal": "http://example.com/1.jpg"}},
+            }
+        ]
+
+        with (
+            patch.object(cli, "_download_single_card_image") as mock_download_single,
+            patch("builtins.print"),
+        ):
+
             mock_download_single.return_value = True
-            cli._download_card_images_bulk(mock_lorcast_api, cards, "test_set", "normal")
+            cli._download_card_images_bulk(
+                mock_lorcast_api, cards, "test_set", "normal"
+            )
 
         # Should use custom directory, not create subdirectories
         expected_path = "/custom/images"
@@ -380,7 +429,9 @@ class TestGetAllSetsCommand:
         )
 
     def test_effective_profile_integration(self, cli, mock_lorcast_api):
-        """Test that get-all-sets respects profile settings when no command line overrides."""
+        """Test that get-all-sets respects profile settings when no command
+        line overrides.
+        """
         # Create args without get_images attribute to trigger profile fallback
         args = argparse.Namespace(
             json=False,  # Not explicitly set to True
@@ -391,60 +442,67 @@ class TestGetAllSetsCommand:
         # Mock profile with specific settings
         mock_profile = Mock(
             print_json=True,  # Profile wants JSON
-            save_json=True,   # Profile wants save
+            save_json=True,  # Profile wants save
             extract_data=True,
             extract_images=True,  # Profile wants images
-            image_size="large"    # Profile specifies large images
+            image_size="large",  # Profile specifies large images
         )
 
-        with patch.object(cli, "_get_effective_profile", return_value=mock_profile), \
-             patch.object(cli, "_print_sets_json") as mock_print_sets, \
-             patch.object(cli, "_print_cards_json") as mock_print_cards, \
-             patch.object(cli, "_save_sets_to_file") as mock_save_sets, \
-             patch.object(cli, "_save_cards_to_file") as mock_save_cards, \
-             patch.object(cli, "_download_card_images_bulk") as mock_download, \
-             patch("builtins.print"):
-            
+        with (
+            patch.object(cli, "_get_effective_profile", return_value=mock_profile),
+            patch.object(cli, "_print_sets_json") as mock_print_sets,
+            patch.object(cli, "_save_sets_to_file") as mock_save_sets,
+            patch.object(cli, "_download_card_images_bulk") as mock_download,
+            patch("builtins.print"),
+        ):
+
             mock_download.return_value = 1
             cli._handle_get_all_sets_command(mock_lorcast_api, args)
 
         # Should use profile settings since args don't override
         mock_print_sets.assert_called_once()  # Profile print_json=True
-        mock_save_sets.assert_called_once()   # Profile save_json=True and extract_data=True
-        # Images: hasattr(args, "get_images") is False, so profile.extract_images=True applies
-        assert mock_download.call_count == 3   # Images enabled for all sets
+        # Profile save_json=True and extract_data=True
+        mock_save_sets.assert_called_once()
+        # Images: hasattr(args, "get_images") is False, so
+        # profile.extract_images=True applies
+        assert mock_download.call_count == 3  # Images enabled for all sets
 
     def test_command_line_overrides_profile(self, cli, mock_lorcast_api):
         """Test that command line arguments override profile settings."""
         args = argparse.Namespace(
-            json=True,         # Explicitly set to True (this overrides profile)
-            save_json=True,    # Explicitly set to True (this overrides profile)
+            json=True,  # Explicitly set to True (this overrides profile)
+            save_json=True,  # Explicitly set to True (this overrides profile)
             get_images="small",  # Explicitly set to small (this overrides profile)
         )
 
         # Mock profile with different settings
         mock_profile = Mock(
-            print_json=False,    # Profile doesn't want JSON
-            save_json=False,     # Profile doesn't want save
+            print_json=False,  # Profile doesn't want JSON
+            save_json=False,  # Profile doesn't want save
             extract_data=True,
             extract_images=False,  # Profile doesn't want images
-            image_size="large"     # Profile specifies large images
+            image_size="large",  # Profile specifies large images
         )
 
-        with patch.object(cli, "_get_effective_profile", return_value=mock_profile), \
-             patch.object(cli, "_print_sets_json") as mock_print_sets, \
-             patch.object(cli, "_save_sets_to_file") as mock_save_sets, \
-             patch.object(cli, "_download_card_images_bulk") as mock_download, \
-             patch("builtins.print"):
-            
+        with (
+            patch.object(cli, "_get_effective_profile", return_value=mock_profile),
+            patch.object(cli, "_print_sets_json") as mock_print_sets,
+            patch.object(cli, "_save_sets_to_file") as mock_save_sets,
+            patch.object(cli, "_download_card_images_bulk") as mock_download,
+            patch("builtins.print"),
+        ):
+
             mock_download.return_value = 1
             cli._handle_get_all_sets_command(mock_lorcast_api, args)
 
         # Should use command line overrides
-        mock_print_sets.assert_called_once()    # args.json=True overrides profile
-        mock_save_sets.assert_called_once()     # args.save_json=True overrides profile
-        assert mock_download.call_count == 3    # args.get_images="small" overrides profile
-        
+        mock_print_sets.assert_called_once()  # args.json=True overrides profile
+        # args.save_json=True overrides profile
+        mock_save_sets.assert_called_once()
+        assert (
+            mock_download.call_count == 3
+        )  # args.get_images="small" overrides profile
+
         # Verify image size override
         for call_args in mock_download.call_args_list:
             assert call_args[0][3] == "small"  # Fourth argument is image_size
@@ -462,16 +520,18 @@ class TestGetAllSetsCommand:
             save_json=False,
             extract_data=True,
             extract_images=True,  # Profile wants images
-            image_size="normal"
+            image_size="normal",
         )
 
-        with patch.object(cli, "_get_effective_profile", return_value=mock_profile), \
-             patch.object(cli, "_download_card_images_bulk") as mock_download, \
-             patch("builtins.print"):
-            
+        with (
+            patch.object(cli, "_get_effective_profile", return_value=mock_profile),
+            patch.object(cli, "_download_card_images_bulk") as mock_download,
+            patch("builtins.print"),
+        ):
+
             mock_download.return_value = 1
             cli._handle_get_all_sets_command(mock_lorcast_api, args)
 
-        # Since args.get_images is None (which is not "not None") and hasattr(args, "get_images") is True,
-        # should_download_images = False
+        # Since args.get_images is None (which is not "not None") and
+        # hasattr(args, "get_images") is True, should_download_images = False
         assert mock_download.call_count == 0
