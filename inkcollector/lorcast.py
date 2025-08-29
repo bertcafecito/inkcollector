@@ -1,16 +1,18 @@
 import json
 import requests
 
-class LorcastAPI():
+
+class LorcastAPI:
     """
     A class to interact with the Lorcast API for collecting data on the Lorcana Trading Card Game.
-    
+
     This class provides methods to retrieve data from the API.
     """
+
     def __init__(self, api_base_url="https://api.lorcast.com", api_version="v0"):
         """
         Initialize the LorcastAPI client.
-        
+
         Parameters:
             api_base_url (str): The base URL for the Lorcast API.
             api_version (str): The version of the API to use.
@@ -19,11 +21,13 @@ class LorcastAPI():
         self.session = requests.Session()
 
         # Set default headers
-        self.session.headers.update({
-            'User-Agent': 'InkCollector/1.0.0',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        })
+        self.session.headers.update(
+            {
+                "User-Agent": "InkCollector/1.0.0",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            }
+        )
 
     def get_sets(self):
         """
@@ -38,14 +42,14 @@ class LorcastAPI():
             response = self.session.get(url)
             response.raise_for_status()  # Raise an exception for bad status codes
 
-            return response.json().get('results', [])
+            return response.json().get("results", [])
         except requests.RequestException as e:
             print(f"Request failed: {e}")
             raise
         except json.JSONDecodeError as e:
             print(f"Failed to decode JSON response: {e}")
             raise ValueError(f"Invalid JSON response: {e}")
-        
+
     def get_set(self, set_id):
         """
         Retrieves details of a specific set from the Lorcast API.
@@ -73,7 +77,7 @@ class LorcastAPI():
         except json.JSONDecodeError as e:
             print(f"Failed to decode JSON response: {e}")
             raise ValueError(f"Invalid JSON response: {e}")
-    
+
     def get_cards(self, set_id):
         """
         Retrieves a list of cards for a specific set from the Lorcast API.
@@ -101,7 +105,7 @@ class LorcastAPI():
         except json.JSONDecodeError as e:
             print(f"Failed to decode JSON response: {e}")
             raise ValueError(f"Invalid JSON response: {e}")
-        
+
     def download_image(self, image_url, output_path):
         """
         Downloads an image from the specified URL and saves it to the given output path.
@@ -114,7 +118,7 @@ class LorcastAPI():
             response = self.session.get(image_url, stream=True)
             response.raise_for_status()  # Raise an exception for bad status codes
 
-            with open(output_path, 'wb') as f:
+            with open(output_path, "wb") as f:
                 for chunk in response.iter_content(1024):
                     f.write(chunk)
             print(f"Image downloaded and saved to {output_path}")
@@ -124,5 +128,3 @@ class LorcastAPI():
         except IOError as e:
             print(f"Failed to save image to {output_path}: {e}")
             raise
-        
-    

@@ -22,19 +22,19 @@ def temp_directory():
 def mock_lorcast_api():
     """Create a mock LorcastAPI instance with common return values."""
     mock_api = Mock(spec=LorcastAPI)
-    
+
     # Default return values
     mock_api.get_sets.return_value = [
         {"id": "set1", "name": "First Set", "released_at": "2023-01-01"},
-        {"id": "set2", "name": "Second Set", "released_at": "2023-06-01"}
+        {"id": "set2", "name": "Second Set", "released_at": "2023-06-01"},
     ]
-    
+
     mock_api.get_set.return_value = {
-        "id": "set1", 
-        "name": "First Set", 
-        "released_at": "2023-01-01"
+        "id": "set1",
+        "name": "First Set",
+        "released_at": "2023-01-01",
     }
-    
+
     mock_api.get_cards.return_value = [
         {
             "id": "card1",
@@ -44,9 +44,9 @@ def mock_lorcast_api():
                 "digital": {
                     "small": "http://example.com/card1_small.jpg",
                     "normal": "http://example.com/card1_normal.jpg",
-                    "large": "http://example.com/card1_large.jpg"
+                    "large": "http://example.com/card1_large.jpg",
                 }
-            }
+            },
         },
         {
             "id": "card2",
@@ -56,12 +56,12 @@ def mock_lorcast_api():
                 "digital": {
                     "small": "http://example.com/card2_small.jpg",
                     "normal": "http://example.com/card2_normal.jpg",
-                    "large": "http://example.com/card2_large.jpg"
+                    "large": "http://example.com/card2_large.jpg",
                 }
-            }
-        }
+            },
+        },
     ]
-    
+
     return mock_api
 
 
@@ -74,15 +74,15 @@ def sample_sets_data():
             "name": "The First Chapter",
             "released_at": "2023-08-18",
             "code": "TFC",
-            "card_count": 204
+            "card_count": 204,
         },
         {
             "id": "ROF",
             "name": "Rise of the Floodborn",
             "released_at": "2023-11-17",
             "code": "ROF",
-            "card_count": 204
-        }
+            "card_count": 204,
+        },
     ]
 
 
@@ -100,9 +100,9 @@ def sample_cards_data():
                 "digital": {
                     "small": "http://example.com/1_small.jpg",
                     "normal": "http://example.com/1_normal.jpg",
-                    "large": "http://example.com/1_large.jpg"
+                    "large": "http://example.com/1_large.jpg",
                 }
-            }
+            },
         },
         {
             "id": "2",
@@ -114,10 +114,10 @@ def sample_cards_data():
                 "digital": {
                     "small": "http://example.com/2_small.jpg",
                     "normal": "http://example.com/2_normal.jpg",
-                    "large": "http://example.com/2_large.jpg"
+                    "large": "http://example.com/2_large.jpg",
                 }
-            }
-        }
+            },
+        },
     ]
 
 
@@ -125,11 +125,9 @@ def sample_cards_data():
 def cli_args_sets_json():
     """Command line arguments for sets with JSON output."""
     from argparse import Namespace
+
     return Namespace(
-        command='lorcast',
-        lorcast_command='get-sets',
-        json=True,
-        save_json=False
+        command="lorcast", lorcast_command="get-sets", json=True, save_json=False
     )
 
 
@@ -137,11 +135,9 @@ def cli_args_sets_json():
 def cli_args_sets_save():
     """Command line arguments for sets with save to file."""
     from argparse import Namespace
+
     return Namespace(
-        command='lorcast',
-        lorcast_command='get-sets',
-        json=False,
-        save_json=True
+        command="lorcast", lorcast_command="get-sets", json=False, save_json=True
     )
 
 
@@ -149,13 +145,14 @@ def cli_args_sets_save():
 def cli_args_cards_with_images():
     """Command line arguments for cards with image download."""
     from argparse import Namespace
+
     return Namespace(
-        command='lorcast',
-        lorcast_command='get-cards',
-        set_id='TFC',
+        command="lorcast",
+        lorcast_command="get-cards",
+        set_id="TFC",
         json=True,
         save_json=True,
-        get_images='large'
+        get_images="large",
     )
 
 
@@ -163,11 +160,12 @@ def cli_args_cards_with_images():
 def cli_args_cards_no_images():
     """Command line arguments for cards without image download."""
     from argparse import Namespace
+
     return Namespace(
-        command='lorcast',
-        lorcast_command='get-cards',
-        set_id='TFC',
+        command="lorcast",
+        lorcast_command="get-cards",
+        set_id="TFC",
         json=False,
         save_json=False,
-        get_images=None
+        get_images=None,
     )
