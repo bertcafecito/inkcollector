@@ -1,6 +1,8 @@
 import argparse
+import json
 
 from inkcollector import __version__
+from inkcollector.lorcast import LorcastAPI
 
 
 class InkcollectorCLI:
@@ -45,7 +47,7 @@ class InkcollectorCLI:
         # Add get-sets subcommand
         get_sets_parser = lorcast_subparsers.add_parser(
             'get-sets',
-            help='Get sets data (under development)'
+            help='Get sets data'
         )
         
         # Add get-cards subcommand
@@ -62,9 +64,20 @@ class InkcollectorCLI:
     
     def handle_lorcast_command(self, args):
         """Handle lorcast command and its subcommands."""
+        lorcast = LorcastAPI()
         if hasattr(args, 'lorcast_command') and args.lorcast_command:
             if args.lorcast_command == 'get-sets':
-                print("Get-sets option is under development")
+                sets = lorcast.get_sets()
+                # Check for empty list
+                if not sets:
+                    print("No sets found.")
+
+                print(f"\n{'='*60}")
+                print(f"{'DISNEY LORCANA SETS':^60}")
+                print(f"{'='*60}")
+                print(f"Found {len(sets)} sets:\n")
+                print(json.dumps(sets, indent=2))
+                
             elif args.lorcast_command == 'get-cards':
                 print("Get-cards option is under development")
             elif args.lorcast_command == 'get-images':
