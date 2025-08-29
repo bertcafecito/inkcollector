@@ -5,55 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
 ## [1.1.0] - 2025-08-29
 
 ### Added
-- **Configuration File Support**: Added comprehensive YAML configuration file support with `.inkcollector.yaml` files
-  - Automatic discovery in current and parent directories
-  - Custom config file paths via `--config` command line option
-  - Configuration validation and error handling
-- **Extraction Profiles**: Implemented predefined and custom extraction profiles
-  - `complete`: Extract all data and images (default)
-  - `images-only`: Extract only card images
-  - `data-only`: Extract only JSON data
-  - `preview`: Show data in console without saving
-  - `high-quality`: Extract everything with large images
-  - Support for user-defined custom profiles
-- **Workspace Configurations**: Added workspace system for different environments
-  - Configurable output directories for data and images
-  - Per-workspace default profiles
-  - Support for multiple named workspaces (default, research, collection, etc.)
-- **Configuration Management Commands**: New `config` command with subcommands
-  - `config init`: Create sample configuration files
-  - `config show`: Display current configuration in YAML or JSON format
-  - `config list`: List available profiles and workspaces
-- **Global CLI Options**: Added global command line options
-  - `--config`: Specify custom configuration file path
-  - `--workspace`: Override workspace selection
-  - `--profile`: Override profile selection
-- **Configuration Documentation**: Comprehensive documentation in `docs/CONFIG.md`
-  - Usage examples and best practices
-  - Migration guide from CLI-only usage
-  - Troubleshooting guide
-- **Configuration Tests**: Added comprehensive test suite for configuration system
-  - Unit tests for all configuration classes and functionality
-  - YAML loading and saving tests
-  - Configuration validation tests
+- **YAML Configuration Files**: Create `.inkcollector.yaml` files to save your settings
+- **Extraction Profiles**: Choose how you want to extract data:
+  - `complete`: Get everything (default)
+  - `images-only`: Just download card images
+  - `data-only`: Just save JSON data
+  - `preview`: View data without saving
+  - `high-quality`: Get large, high-quality images
+- **Workspaces**: Organize different projects with separate output folders
+- **New Commands**:
+  - `config init`: Create a sample config file
+  - `config show`: View your current settings
+  - `config list`: See all available profiles and workspaces
+- **New Options**:
+  - `--config`: Use a specific config file
+  - `--workspace`: Switch between workspaces
+  - `--profile`: Use a different extraction profile
 
 ### Changed
-- **CLI Architecture**: Enhanced CLI to support configuration-driven behavior
-  - Profile-based data extraction logic
-  - Workspace-aware output directory management
-  - Configuration priority system (CLI args > profile > workspace > defaults)
-- **Lorcast Commands**: Updated to respect profile and workspace settings
-  - Automatic application of profile extraction settings
-  - Command line arguments override profile settings
-  - Workspace-based output directory creation
-
-### Dependencies
-- **PyYAML**: Added PyYAML dependency for YAML configuration file parsing
-
-## [Unreleased]
+- CLI now uses configuration files to remember your preferences
+- Commands automatically use your workspace and profile settings
+- Added PyYAML dependency for config file support
 
 ## [1.0.0] - 2025-08-28
 
