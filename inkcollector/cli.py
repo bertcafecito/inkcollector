@@ -1,12 +1,17 @@
 import argparse
 import json
 import os
-import yaml
 from typing import Any, Dict, List, Optional
 
+import yaml
+
 from inkcollector import __version__
+from inkcollector.config import (
+    ConfigManager,
+    ExtractionProfile,
+    InkcollectorConfig,
+)
 from inkcollector.lorcast import LorcastAPI
-from inkcollector.config import ConfigManager, InkcollectorConfig, ExtractionProfile, WorkspaceConfig
 
 
 class InkcollectorCLI:
@@ -26,7 +31,7 @@ class InkcollectorCLI:
         self.parser: Optional[argparse.ArgumentParser] = None
         self.config_manager = ConfigManager()
         self.config: InkcollectorConfig = self.config_manager.load_config()
-        
+
         # Use workspace config for output directories
         workspace = self.config.get_workspace(self.config.default_workspace)
         if workspace:
@@ -74,9 +79,7 @@ class InkcollectorCLI:
         self.parser.add_argument(
             "--config", type=str, help="Path to configuration file"
         )
-        self.parser.add_argument(
-            "--workspace", type=str, help="Workspace name to use"
-        )
+        self.parser.add_argument("--workspace", type=str, help="Workspace name to use")
         self.parser.add_argument(
             "--profile", type=str, help="Extraction profile to use"
         )
@@ -88,7 +91,7 @@ class InkcollectorCLI:
 
         # Add config command
         self._setup_config_parser(subparsers)
-        
+
         # Add lorcast command
         self._setup_lorcast_parser(subparsers)
 
@@ -108,12 +111,13 @@ class InkcollectorCLI:
             "init", help="Create a sample configuration file"
         )
         init_parser.add_argument(
-            "--path", type=str, default=".inkcollector.yaml",
-            help="Path for the configuration file (default: .inkcollector.yaml)"
+            "--path",
+            type=str,
+            default=".inkcollector.yaml",
+            help="Path for the configuration file (default: .inkcollector.yaml)",
         )
         init_parser.add_argument(
-            "--force", action="store_true",
-            help="Overwrite existing configuration file"
+            "--force", action="store_true", help="Overwrite existing configuration file"
         )
 
         # Add show subcommand
@@ -121,8 +125,10 @@ class InkcollectorCLI:
             "show", help="Show current configuration"
         )
         show_parser.add_argument(
-            "--format", choices=["yaml", "json"], default="yaml",
-            help="Output format (default: yaml)"
+            "--format",
+            choices=["yaml", "json"],
+            default="yaml",
+            help="Output format (default: yaml)",
         )
 
         # Add list subcommand
@@ -130,12 +136,10 @@ class InkcollectorCLI:
             "list", help="List available profiles and workspaces"
         )
         list_parser.add_argument(
-            "--profiles", action="store_true",
-            help="List available profiles"
+            "--profiles", action="store_true", help="List available profiles"
         )
         list_parser.add_argument(
-            "--workspaces", action="store_true",
-            help="List available workspaces"
+            "--workspaces", action="store_true", help="List available workspaces"
         )
 
     def _setup_lorcast_parser(self, subparsers: argparse._SubParsersAction) -> None:
@@ -202,8 +206,7 @@ class InkcollectorCLI:
         self._apply_args_overrides(args)
 
         lorcast = LorcastAPI(
-            api_base_url=self.config.api_base_url,
-            api_version=self.config.api_version
+            api_base_url=self.config.api_base_url, api_version=self.config.api_version
         )
 
         if args.lorcast_command == "get-sets":
@@ -249,7 +252,7 @@ class InkcollectorCLI:
             args: Parsed command line arguments
         """
         config_path = args.path
-        
+
         if os.path.exists(config_path) and not args.force:
             print(f"Configuration file already exists at {config_path}")
             print("Use --force to overwrite")
@@ -272,7 +275,11 @@ class InkcollectorCLI:
             print(json.dumps(config_dict, indent=2))
         else:  # yaml
             config_dict = self.config_manager._config_to_dict(self.config)
-            print(yaml.dump(config_dict, default_flow_style=False, sort_keys=False, indent=2))
+            print(
+                yaml.dump(
+                    config_dict, default_flow_style=False, sort_keys=False, indent=2
+                )
+            )
 
     def _handle_config_list_command(self, args: argparse.Namespace) -> None:
         """Handle the config list subcommand.
@@ -289,9 +296,11 @@ class InkcollectorCLI:
         if args.workspaces or (not args.profiles and not args.workspaces):
             print("Available Workspaces:")
             for name, workspace in self.config.workspaces.items():
-                print(f"  {name}: data='{workspace.data_output_dir}', "
-                      f"images='{workspace.image_output_dir}', "
-                      f"profile='{workspace.default_profile}'")
+                print(
+                    f"  {name}: data='{workspace.data_output_dir}', "
+                    f"images='{workspace.image_output_dir}', "
+                    f"profile='{workspace.default_profile}'"
+                )
 
     def _get_effective_profile(self, args: argparse.Namespace) -> ExtractionProfile:
         """Get the effective extraction profile based on args and config.
@@ -303,7 +312,7 @@ class InkcollectorCLI:
             ExtractionProfile to use for the operation
         """
         # Use profile from command line if specified
-        if hasattr(args, 'profile') and args.profile:
+        if hasattr(args, "profile") and args.profile:
             profile = self.config.get_profile(args.profile)
             if profile:
                 return profile
@@ -311,7 +320,7 @@ class InkcollectorCLI:
                 print(f"Warning: Profile '{args.profile}' not found, using default")
 
         # Use workspace default profile
-        workspace_name = getattr(args, 'workspace', self.config.default_workspace)
+        workspace_name = getattr(args, "workspace", self.config.default_workspace)
         workspace = self.config.get_workspace(workspace_name)
         if workspace:
             profile = self.config.get_profile(workspace.default_profile)
@@ -319,7 +328,7 @@ class InkcollectorCLI:
                 return profile
 
         # Fallback to complete profile
-        return self.config.get_profile('complete') or self.config.profiles['complete']
+        return self.config.get_profile("complete") or self.config.profiles["complete"]
 
     def _handle_get_sets_command(
         self, lorcast: LorcastAPI, args: argparse.Namespace
@@ -341,10 +350,16 @@ class InkcollectorCLI:
 
         # Get effective profile settings
         profile = self._get_effective_profile(args)
-        
+
         # Apply profile settings, with command line overrides
-        should_print = args.json if hasattr(args, 'json') and args.json else profile.print_json
-        should_save = args.save_json if hasattr(args, 'save_json') and args.save_json else (profile.save_json and profile.extract_data)
+        should_print = (
+            args.json if hasattr(args, "json") and args.json else profile.print_json
+        )
+        should_save = (
+            args.save_json
+            if hasattr(args, "save_json") and args.save_json
+            else (profile.save_json and profile.extract_data)
+        )
 
         if should_print:
             self._print_sets_json(sets)
@@ -374,14 +389,22 @@ class InkcollectorCLI:
 
         # Get effective profile settings
         profile = self._get_effective_profile(args)
-        
+
         # Apply profile settings, with command line overrides
-        should_print = args.json if hasattr(args, 'json') and args.json else profile.print_json
-        should_save = args.save_json if hasattr(args, 'save_json') and args.save_json else (profile.save_json and profile.extract_data)
-        should_download_images = args.get_images is not None or (profile.extract_images and not hasattr(args, 'get_images'))
-        
+        should_print = (
+            args.json if hasattr(args, "json") and args.json else profile.print_json
+        )
+        should_save = (
+            args.save_json
+            if hasattr(args, "save_json") and args.save_json
+            else (profile.save_json and profile.extract_data)
+        )
+        should_download_images = args.get_images is not None or (
+            profile.extract_images and not hasattr(args, "get_images")
+        )
+
         # Determine image size
-        if hasattr(args, 'get_images') and args.get_images:
+        if hasattr(args, "get_images") and args.get_images:
             image_size = args.get_images
         elif profile.extract_images:
             image_size = profile.image_size
@@ -403,9 +426,9 @@ class InkcollectorCLI:
         Args:
             sets: List of set data dictionaries
         """
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"{'DISNEY LORCANA SETS':^60}")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         print(f"Found {len(sets)} sets:\n")
         print(json.dumps(sets, indent=2))
 
@@ -416,9 +439,9 @@ class InkcollectorCLI:
             cards: List of card data dictionaries
             set_id: ID of the set
         """
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"{'DISNEY LORCANA CARDS':^60}")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         print(f"Found {len(cards)} cards in set {set_id}:\n")
         print(json.dumps(cards, indent=2))
 
@@ -571,7 +594,7 @@ class InkcollectorCLI:
             args: Parsed command line arguments
         """
         # Override config file if specified
-        if hasattr(args, 'config') and args.config:
+        if hasattr(args, "config") and args.config:
             self.config = self.config_manager.load_config(args.config)
             # Update workspace settings after config reload
             workspace = self.config.get_workspace(self.config.default_workspace)
@@ -581,14 +604,16 @@ class InkcollectorCLI:
                 self._setup_output_directories()
 
         # Override workspace if specified
-        if hasattr(args, 'workspace') and args.workspace:
+        if hasattr(args, "workspace") and args.workspace:
             workspace = self.config.get_workspace(args.workspace)
             if workspace:
                 self.data_output_dir = workspace.data_output_dir
                 self.image_output_dir = workspace.image_output_dir
                 self._setup_output_directories()
             else:
-                print(f"Warning: Workspace '{args.workspace}' not found in configuration")
+                print(
+                    f"Warning: Workspace '{args.workspace}' not found in configuration"
+                )
 
 
 def main() -> None:

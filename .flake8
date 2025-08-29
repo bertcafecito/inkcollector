@@ -1,0 +1,17 @@
+[flake8]
+max-line-length = 88
+max-complexity = 10
+exclude = 
+    .venv,
+    venv,
+    build,
+    dist,
+    .git,
+    __pycache__,
+    *.egg-info,
+    .pytest_cache
+
+# Ignore some checks that Black handles
+ignore = 
+    E203,
+    W503
