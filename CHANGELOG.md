@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Refactored code to use argparse for command-line argument parsing.
+
+### Updated
+- Updated Version option to use argparse.
+
 ## [0.1.1] - 2025-05-11
 
 ### Updated
