@@ -8,7 +8,6 @@ and error handling scenarios.
 
 import argparse
 import os
-import sys
 import tempfile
 from unittest.mock import Mock, call, mock_open, patch
 
@@ -513,21 +512,32 @@ class TestInkcollectorCLI:
     def test_custom_directory_flags_parsing(self, cli):
         """Test that custom directory flags are properly parsed."""
         # Test get-sets command
-        args = cli.parser.parse_args([
-            "lorcast", "get-sets",
-            "--output-dir", "/path/to/custom/data",
-            "--image-dir", "/path/to/custom/images"
-        ])
+        args = cli.parser.parse_args(
+            [
+                "lorcast",
+                "get-sets",
+                "--output-dir",
+                "/path/to/custom/data",
+                "--image-dir",
+                "/path/to/custom/images",
+            ]
+        )
         assert args.output_dir == "/path/to/custom/data"
         assert args.image_dir == "/path/to/custom/images"
-        
+
         # Test get-cards command
-        args = cli.parser.parse_args([
-            "lorcast", "get-cards",
-            "--set-id", "test-set",
-            "--output-dir", "/path/to/custom/data",
-            "--image-dir", "/path/to/custom/images"
-        ])
+        args = cli.parser.parse_args(
+            [
+                "lorcast",
+                "get-cards",
+                "--set-id",
+                "test-set",
+                "--output-dir",
+                "/path/to/custom/data",
+                "--image-dir",
+                "/path/to/custom/images",
+            ]
+        )
         assert args.output_dir == "/path/to/custom/data"
         assert args.image_dir == "/path/to/custom/images"
 

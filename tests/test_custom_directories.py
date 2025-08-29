@@ -45,21 +45,32 @@ class TestCustomDirectories:
     def test_parser_has_output_dir_arguments(self, cli):
         """Test that the parser includes --output-dir and --image-dir arguments."""
         # Test get-sets command has the flags
-        args = cli.parser.parse_args([
-            "lorcast", "get-sets", 
-            "--output-dir", "/custom/data",
-            "--image-dir", "/custom/images"
-        ])
+        args = cli.parser.parse_args(
+            [
+                "lorcast",
+                "get-sets",
+                "--output-dir",
+                "/custom/data",
+                "--image-dir",
+                "/custom/images",
+            ]
+        )
         assert args.output_dir == "/custom/data"
         assert args.image_dir == "/custom/images"
 
         # Test get-cards command has the flags
-        args = cli.parser.parse_args([
-            "lorcast", "get-cards", 
-            "--set-id", "test-set",
-            "--output-dir", "/custom/data",
-            "--image-dir", "/custom/images"
-        ])
+        args = cli.parser.parse_args(
+            [
+                "lorcast",
+                "get-cards",
+                "--set-id",
+                "test-set",
+                "--output-dir",
+                "/custom/data",
+                "--image-dir",
+                "/custom/images",
+            ]
+        )
         assert args.output_dir == "/custom/data"
         assert args.image_dir == "/custom/images"
 
@@ -67,7 +78,7 @@ class TestCustomDirectories:
         """Test applying custom data directory override."""
         custom_dir = os.path.abspath("/custom/data")
         args = argparse.Namespace(output_dir=custom_dir, image_dir=None)
-        
+
         with (
             patch.object(cli, "_create_directory_if_not_exists") as mock_create_dir,
             patch("builtins.print") as mock_print,
@@ -86,7 +97,7 @@ class TestCustomDirectories:
         """Test applying custom image directory override."""
         custom_dir = os.path.abspath("/custom/images")
         args = argparse.Namespace(output_dir=None, image_dir=custom_dir)
-        
+
         with (
             patch.object(cli, "_create_directory_if_not_exists") as mock_create_dir,
             patch("builtins.print") as mock_print,
@@ -106,10 +117,9 @@ class TestCustomDirectories:
         custom_data_dir = os.path.abspath("/custom/data")
         custom_image_dir = os.path.abspath("/custom/images")
         args = argparse.Namespace(
-            output_dir=custom_data_dir, 
-            image_dir=custom_image_dir
+            output_dir=custom_data_dir, image_dir=custom_image_dir
         )
-        
+
         with (
             patch.object(cli, "_create_directory_if_not_exists") as mock_create_dir,
             patch("builtins.print") as mock_print,
@@ -120,15 +130,15 @@ class TestCustomDirectories:
         assert cli.image_output_dir == custom_image_dir
         assert cli.using_custom_data_dir is True
         assert cli.using_custom_image_dir is True
-        
+
         # Check that both directories were created
         expected_calls = [call(custom_data_dir), call(custom_image_dir)]
         mock_create_dir.assert_has_calls(expected_calls)
-        
+
         # Check both print messages
         expected_print_calls = [
             call(f"Using custom data output directory: {custom_data_dir}"),
-            call(f"Using custom image output directory: {custom_image_dir}")
+            call(f"Using custom image output directory: {custom_image_dir}"),
         ]
         mock_print.assert_has_calls(expected_print_calls)
 
@@ -136,9 +146,9 @@ class TestCustomDirectories:
         """Test that no overrides are applied when no custom directories specified."""
         original_data_dir = cli.data_output_dir
         original_image_dir = cli.image_output_dir
-        
+
         args = argparse.Namespace(output_dir=None, image_dir=None)
-        
+
         with (
             patch.object(cli, "_create_directory_if_not_exists") as mock_create_dir,
             patch("builtins.print") as mock_print,
@@ -154,7 +164,9 @@ class TestCustomDirectories:
 
     @patch("builtins.open", new_callable=mock_open)
     @patch("json.dump")
-    def test_save_sets_to_file_with_custom_data_dir(self, mock_json_dump, mock_file, cli):
+    def test_save_sets_to_file_with_custom_data_dir(
+        self, mock_json_dump, mock_file, cli
+    ):
         """Test saving sets with custom data directory (full override)."""
         cli.using_custom_data_dir = True
         cli.data_output_dir = os.path.join("custom", "data")
@@ -176,7 +188,9 @@ class TestCustomDirectories:
 
     @patch("builtins.open", new_callable=mock_open)
     @patch("json.dump")
-    def test_save_sets_to_file_with_default_data_dir(self, mock_json_dump, mock_file, cli):
+    def test_save_sets_to_file_with_default_data_dir(
+        self, mock_json_dump, mock_file, cli
+    ):
         """Test saving sets with default data directory structure."""
         cli.using_custom_data_dir = False
         cli.data_output_dir = os.path.join("default", "data")
@@ -203,7 +217,9 @@ class TestCustomDirectories:
 
     @patch("builtins.open", new_callable=mock_open)
     @patch("json.dump")
-    def test_save_cards_to_file_with_custom_data_dir(self, mock_json_dump, mock_file, cli):
+    def test_save_cards_to_file_with_custom_data_dir(
+        self, mock_json_dump, mock_file, cli
+    ):
         """Test saving cards with custom data directory (full override)."""
         cli.using_custom_data_dir = True
         cli.data_output_dir = os.path.join("custom", "data")
@@ -226,7 +242,9 @@ class TestCustomDirectories:
 
     @patch("builtins.open", new_callable=mock_open)
     @patch("json.dump")
-    def test_save_cards_to_file_with_default_data_dir(self, mock_json_dump, mock_file, cli):
+    def test_save_cards_to_file_with_default_data_dir(
+        self, mock_json_dump, mock_file, cli
+    ):
         """Test saving cards with default data directory structure."""
         cli.using_custom_data_dir = False
         cli.data_output_dir = os.path.join("default", "data")
@@ -257,27 +275,35 @@ class TestCustomDirectories:
         cli.using_custom_image_dir = True
         cli.image_output_dir = os.path.join("custom", "images")
         mock_cards = [
-            {"id": "card1", "image_uris": {"digital": {"normal": "http://example.com/card1.jpg"}}},
-            {"id": "card2", "image_uris": {"digital": {"normal": "http://example.com/card2.jpg"}}}
+            {
+                "id": "card1",
+                "image_uris": {"digital": {"normal": "http://example.com/card1.jpg"}},
+            },
+            {
+                "id": "card2",
+                "image_uris": {"digital": {"normal": "http://example.com/card2.jpg"}},
+            },
         ]
         set_id = "test-set-123"
 
         with (
-            patch.object(cli, "_download_single_card_image", return_value=True) as mock_download,
+            patch.object(
+                cli, "_download_single_card_image", return_value=True
+            ) as mock_download,
             patch("builtins.print") as mock_print,
         ):
             cli._download_card_images(mock_lorcast_api, mock_cards, set_id)
 
         # Images should be downloaded directly to custom directory
         expected_output_path = os.path.join("custom", "images")
-        
+
         # Check that each card was downloaded to the custom directory
         expected_calls = [
             call(mock_lorcast_api, mock_cards[0], expected_output_path, "normal"),
-            call(mock_lorcast_api, mock_cards[1], expected_output_path, "normal")
+            call(mock_lorcast_api, mock_cards[1], expected_output_path, "normal"),
         ]
         mock_download.assert_has_calls(expected_calls)
-        
+
         # Check success message
         mock_print.assert_any_call("Downloading images for 2 cards...")
         mock_print.assert_any_call("Successfully downloaded 2 out of 2 card images.")
@@ -287,26 +313,35 @@ class TestCustomDirectories:
         cli.using_custom_image_dir = False
         cli.image_output_dir = os.path.join("default", "images")
         mock_cards = [
-            {"id": "card1", "image_uris": {"digital": {"normal": "http://example.com/card1.jpg"}}}
+            {
+                "id": "card1",
+                "image_uris": {"digital": {"normal": "http://example.com/card1.jpg"}},
+            }
         ]
         set_id = "test-set-123"
 
         with (
             patch.object(cli, "_create_directory_if_not_exists") as mock_create_dir,
-            patch.object(cli, "_download_single_card_image", return_value=True) as mock_download,
-            patch("builtins.print") as mock_print,
+            patch.object(
+                cli, "_download_single_card_image", return_value=True
+            ) as mock_download,
+            patch("builtins.print"),
         ):
             cli._download_card_images(mock_lorcast_api, mock_cards, set_id)
 
         # Images should be downloaded to default lorcast subdirectory structure
-        expected_output_path = os.path.join("default", "images", "lorcast", "sets", "test-set-123")
+        expected_output_path = os.path.join(
+            "default", "images", "lorcast", "sets", "test-set-123"
+        )
         mock_create_dir.assert_called_once_with(expected_output_path)
         mock_download.assert_called_once_with(
             mock_lorcast_api, mock_cards[0], expected_output_path, "normal"
         )
 
     @patch("inkcollector.cli.LorcastAPI")
-    def test_handle_lorcast_command_applies_directory_overrides(self, mock_lorcast_class, cli):
+    def test_handle_lorcast_command_applies_directory_overrides(
+        self, mock_lorcast_class, cli
+    ):
         """Test that handle_lorcast_command applies directory overrides."""
         mock_lorcast = Mock()
         mock_lorcast_class.return_value = mock_lorcast
@@ -317,7 +352,7 @@ class TestCustomDirectories:
             output_dir="/custom/data",
             image_dir="/custom/images",
             json=False,
-            save_json=False
+            save_json=False,
         )
 
         with (
@@ -336,7 +371,7 @@ class TestCustomDirectories:
         """Test behavior when only one custom directory is specified."""
         # Test custom data dir only
         args = argparse.Namespace(output_dir="/custom/data", image_dir=None)
-        
+
         with (
             patch.object(cli, "_create_directory_if_not_exists"),
             patch("builtins.print"),
@@ -352,7 +387,7 @@ class TestCustomDirectories:
 
         # Test custom image dir only
         args = argparse.Namespace(output_dir=None, image_dir="/custom/images")
-        
+
         with (
             patch.object(cli, "_create_directory_if_not_exists"),
             patch("builtins.print"),
@@ -372,20 +407,18 @@ class TestCustomDirectories:
 
         # Create CLI with custom directories
         custom_data_dir = os.path.join(temp_dir, "custom_data")
-        
+
         with patch("inkcollector.cli.InkcollectorCLI._setup_output_directories"):
             cli = InkcollectorCLI()
 
         # Simulate command line arguments
-        args = cli.parser.parse_args([
-            "lorcast", "get-sets", 
-            "--save-json",
-            "--output-dir", custom_data_dir
-        ])
+        args = cli.parser.parse_args(
+            ["lorcast", "get-sets", "--save-json", "--output-dir", custom_data_dir]
+        )
 
         with (
             patch("builtins.open", mock_open()) as mock_file,
-            patch("json.dump") as mock_json_dump,
+            patch("json.dump"),
             patch("builtins.print"),
         ):
             cli.handle_lorcast_command(args)
@@ -395,36 +428,47 @@ class TestCustomDirectories:
         mock_file.assert_called_with(expected_path, "w", encoding="utf-8")
 
     @patch("inkcollector.cli.LorcastAPI")
-    def test_end_to_end_custom_directories_get_cards(self, mock_lorcast_class, temp_dir):
+    def test_end_to_end_custom_directories_get_cards(
+        self, mock_lorcast_class, temp_dir
+    ):
         """Test end-to-end flow with custom directories for get-cards command."""
         # Setup mock
         mock_lorcast = Mock()
         mock_lorcast.get_set.return_value = {"id": "test-set"}
         mock_lorcast.get_cards.return_value = [
-            {"id": "card1", "image_uris": {"digital": {"normal": "http://example.com/card1.jpg"}}}
+            {
+                "id": "card1",
+                "image_uris": {"digital": {"normal": "http://example.com/card1.jpg"}},
+            }
         ]
         mock_lorcast_class.return_value = mock_lorcast
 
         # Create CLI with custom directories
         custom_data_dir = os.path.join(temp_dir, "custom_data")
         custom_image_dir = os.path.join(temp_dir, "custom_images")
-        
+
         with patch("inkcollector.cli.InkcollectorCLI._setup_output_directories"):
             cli = InkcollectorCLI()
 
         # Simulate command line arguments
-        args = cli.parser.parse_args([
-            "lorcast", "get-cards",
-            "--set-id", "test-set",
-            "--save-json",
-            "--get-images",
-            "--output-dir", custom_data_dir,
-            "--image-dir", custom_image_dir
-        ])
+        args = cli.parser.parse_args(
+            [
+                "lorcast",
+                "get-cards",
+                "--set-id",
+                "test-set",
+                "--save-json",
+                "--get-images",
+                "--output-dir",
+                custom_data_dir,
+                "--image-dir",
+                custom_image_dir,
+            ]
+        )
 
         with (
             patch("builtins.open", mock_open()) as mock_file,
-            patch("json.dump") as mock_json_dump,
+            patch("json.dump"),
             patch.object(cli, "_download_single_card_image", return_value=True),
             patch("builtins.print"),
         ):
@@ -439,15 +483,14 @@ class TestCustomDirectories:
         # Simulate workspace being applied first
         cli.data_output_dir = "/workspace/data"
         cli.image_output_dir = "/workspace/images"
-        
+
         # Then apply custom directories
         custom_data_dir = os.path.abspath("/custom/data")
         custom_image_dir = os.path.abspath("/custom/images")
         args = argparse.Namespace(
-            output_dir=custom_data_dir,
-            image_dir=custom_image_dir
+            output_dir=custom_data_dir, image_dir=custom_image_dir
         )
-        
+
         with (
             patch.object(cli, "_create_directory_if_not_exists"),
             patch("builtins.print"),

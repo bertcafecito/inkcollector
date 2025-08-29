@@ -489,12 +489,14 @@ class InkcollectorCLI:
             sets: List of set data dictionaries
         """
         if self.using_custom_data_dir:
-            # Full override: save directly to custom directory without any subdirectories
+            # Full override: save directly to custom directory without subdirectories
             output_path = self.data_output_dir
             file_path = os.path.join(output_path, "sets.json")
         else:
             # Default behavior: use lorcast subdirectory
-            output_path = os.path.join(self.data_output_dir, self.LORCAST_DATASOURCE_DIR)
+            output_path = os.path.join(
+                self.data_output_dir, self.LORCAST_DATASOURCE_DIR
+            )
             self._create_directory_if_not_exists(output_path)
             file_path = os.path.join(output_path, "sets.json")
 
@@ -513,7 +515,7 @@ class InkcollectorCLI:
             set_id: ID of the set
         """
         if self.using_custom_data_dir:
-            # Full override: save directly to custom directory with just the set filename
+            # Full override: save directly to custom directory with set filename
             output_path = self.data_output_dir
             file_path = os.path.join(output_path, f"{set_id}.json")
         else:
@@ -555,7 +557,7 @@ class InkcollectorCLI:
                 self.image_output_dir, self.LORCAST_DATASOURCE_DIR, "sets", set_id
             )
             self._create_directory_if_not_exists(output_path)
-        
+
         print(f"Downloading images for {len(cards)} cards...")
         successful_downloads = 0
 
