@@ -78,6 +78,12 @@ Love this project? Here's how you can show your support:
 
 ---
 
+## 🤖 AI Assistance Acknowledgment
+
+I leverage AI to assist with coding throughout this project, but I try my best to review and edit all AI-generated content to ensure quality and accuracy.
+
+---
+
 ## 📄 License
 
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
