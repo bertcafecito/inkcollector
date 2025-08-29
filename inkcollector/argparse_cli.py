@@ -12,14 +12,23 @@ class InkcollectorCLI:
     def __init__(self):
         """Initialize the CLI parser."""
         self.parser = None
+        self._setup_data_output_dir()
+        self._setup_image_output_dir()
         self._setup_parser()
 
-    def __setup_output_dir(self):
+    def _setup_data_output_dir(self):
         """Set up the file output options."""
-        self.output_dir = "data"
+        self.data_output_dir = "data"
         # Create the output directory if it doesn't exist
-        if not os.path.exists(self.output_dir):
-            os.makedirs(self.output_dir)
+        if not os.path.exists(self.data_output_dir):
+            os.makedirs(self.data_output_dir)
+
+    def _setup_image_output_dir(self):
+        """Set up the image output options."""
+        self.image_output_dir = "images"
+        # Create the image output directory if it doesn't exist
+        if not os.path.exists(self.image_output_dir):
+            os.makedirs(self.image_output_dir)
 
     def _setup_parser(self):
         """Set up the argument parser and subcommands."""
@@ -89,16 +98,9 @@ class InkcollectorCLI:
             action='store_true',
             help='Save JSON data to a file'
         )
-        
-        # Add get-images subcommand
-        get_images_parser = lorcast_subparsers.add_parser(
-            'get-images',
-            help='Get images data (under development)'
-        )
-        get_images_parser.add_argument(
-            '--json',
-            action='store_true',
-            help='Output data in JSON format'
+        get_cards_parser.add_argument(
+            '--get-images',
+            action='store_true'
         )
     
     def handle_lorcast_command(self, args):
@@ -123,8 +125,7 @@ class InkcollectorCLI:
                     print(json.dumps(sets, indent=2))
 
                 if args.save_json:
-                    self.__setup_output_dir()
-                    output_path = os.path.join(self.output_dir, datasource_dir)
+                    output_path = os.path.join(self.data_output_dir, datasource_dir)
                     # Create directory if it doesn't exist
                     if not os.path.exists(output_path):
                         os.makedirs(output_path)
@@ -151,8 +152,7 @@ class InkcollectorCLI:
                     print(json.dumps(cards, indent=2))
 
                 if args.save_json:
-                    self.__setup_output_dir()
-                    output_path = os.path.join(self.output_dir, datasource_dir, "sets")
+                    output_path = os.path.join(self.data_output_dir, datasource_dir, "sets")
                     # Create directory if it doesn't exist
                     if not os.path.exists(output_path):
                         os.makedirs(output_path)
@@ -163,9 +163,34 @@ class InkcollectorCLI:
                         print(f"Cards data saved to {file_path}")
                     except Exception as e:
                         print(f"Error saving cards data to {file_path}: {e}")
+                if args.get_images:
+                    output_path = os.path.join(self.image_output_dir, datasource_dir, "sets", set_id)
+                    # Create directory if it doesn't exist
+                    if not os.path.exists(output_path):
+                        os.makedirs(output_path)
+                    for card in cards:
+                        card_id = card.get('id', None)
+                        if not card_id:
+                            print("Card ID not found, skipping image download.")
+                            continue
 
-            elif args.lorcast_command == 'get-images':
-                print("Get-images option is under development")
+                        if not card.get('image_uris'):
+                            print(f"No image URIs found for card {card_id}, skipping image download.")
+                            continue
+
+                        image_uri = card.get('image_uris').get('digital').get('large', None)
+                        
+                        if not image_uri:
+                            print(f"No large image URI found for card {card_id}, skipping image download.")
+                            continue
+
+                        try:
+                            image_output_path = os.path.join(output_path, f"{card_id}.jpg")
+                            lorcast.download_image(image_uri, image_output_path)
+                            print(f"Downloaded image for card {card_id} to {image_output_path}")
+                        except Exception as e:
+                            print(f"Error downloading image for card {card_id}: {e}")
+
         else:
             print("Lorcast command is under development. Use --help to see available subcommands.")
     

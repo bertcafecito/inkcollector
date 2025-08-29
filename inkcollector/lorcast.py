@@ -74,4 +74,27 @@ class LorcastAPI():
             print(f"Failed to decode JSON response: {e}")
             raise ValueError(f"Invalid JSON response: {e}")
         
+    def download_image(self, image_url, output_path):
+        """
+        Downloads an image from the specified URL and saves it to the given output path.
+
+        Parameters:
+            image_url (str): The URL of the image to download.
+            output_path (str): The file path where the image will be saved.
+        """
+        try:
+            response = self.session.get(image_url, stream=True)
+            response.raise_for_status()  # Raise an exception for bad status codes
+
+            with open(output_path, 'wb') as f:
+                for chunk in response.iter_content(1024):
+                    f.write(chunk)
+            print(f"Image downloaded and saved to {output_path}")
+        except requests.RequestException as e:
+            print(f"Failed to download image: {e}")
+            raise
+        except IOError as e:
+            print(f"Failed to save image to {output_path}: {e}")
+            raise
+        
     
