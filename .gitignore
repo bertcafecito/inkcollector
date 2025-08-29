@@ -177,3 +177,27 @@ cython_debug/
 data/
 logs/
 images/
+
+# Configuration files
+# Ignore user-specific configuration files
+.inkcollector.yaml
+.inkcollector.yml
+.inkcollector.local.yaml
+.inkcollector.local.yml
+.inkcollector.*.yaml
+.inkcollector.*.yml
+inkcollector.yaml
+inkcollector.yml
+inkcollector.local.yaml
+inkcollector.local.yml
+inkcollector.*.yaml
+inkcollector.*.yml
+
+# But keep example/template configuration files
+!*example*.yaml
+!*example*.yml
+!*template*.yaml
+!*template*.yml
+!*sample*.yaml
+!*sample*.yml
+!test-config.yaml
