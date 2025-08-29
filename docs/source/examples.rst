@@ -407,6 +407,122 @@ Generate content for blogs, articles, or presentations:
     # Download specific images for articles
     inkcollector --profile content-images lorcast get-cards --set-id TFC --get-images
 
+Custom Directory Control
+========================
+
+Override Default Paths
+----------------------
+
+Take complete control over where files are saved, bypassing the default ``lorcast/`` subdirectory structure:
+
+.. code-block:: shell
+
+    # Default behavior: structured subdirectories
+    inkcollector lorcast get-sets --save-json
+    # → Saves to: data/lorcast/sets.json
+    
+    inkcollector lorcast get-cards --set-id TFC --save-json --get-images
+    # → Data: data/lorcast/sets/TFC.json
+    # → Images: images/lorcast/sets/TFC/crd_*.jpg
+    
+    # Custom directories: full override
+    inkcollector --output-dir /project/data lorcast get-sets --save-json
+    # → Saves to: /project/data/sets.json
+    
+    inkcollector --output-dir /project/cards --image-dir /project/images lorcast get-cards --set-id TFC --save-json --get-images
+    # → Data: /project/cards/TFC.json
+    # → Images: /project/images/crd_*.jpg
+
+Cross-Platform Paths
+--------------------
+
+Custom directories work across operating systems:
+
+.. code-block:: shell
+
+    # Windows
+    inkcollector --output-dir "C:\MyProject\Data" --image-dir "C:\MyProject\Images" lorcast get-cards --set-id TFC --save-json --get-images
+    
+    # macOS/Linux
+    inkcollector --output-dir "/Users/username/project/data" --image-dir "/Users/username/project/images" lorcast get-cards --set-id TFC --save-json --get-images
+    
+    # Relative paths (from current directory)
+    inkcollector --output-dir "./project-data" --image-dir "./project-images" lorcast get-cards --set-id TFC --save-json --get-images
+
+Project Organization
+-------------------
+
+Organize different projects with custom directories:
+
+.. code-block:: shell
+
+    # Research project
+    inkcollector --output-dir /research/lorcana/data --image-dir /research/lorcana/images lorcast get-sets --save-json
+    inkcollector --output-dir /research/lorcana/data --image-dir /research/lorcana/images lorcast get-cards --set-id TFC --save-json --get-images
+    
+    # Website project (different organization)
+    inkcollector --output-dir /website/api/data --image-dir /website/static/cards lorcast get-sets --save-json
+    inkcollector --output-dir /website/api/data --image-dir /website/static/cards lorcast get-cards --set-id TFC --save-json --get-images
+    
+    # Backup/archive (timestamp-based)
+    TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+    inkcollector --output-dir "/backup/lorcana_$TIMESTAMP/data" --image-dir "/backup/lorcana_$TIMESTAMP/images" lorcast get-sets --save-json
+
+Mixed Configurations
+-------------------
+
+Combine custom directories with other features:
+
+.. code-block:: shell
+
+    # Custom directories with profiles
+    inkcollector --output-dir /backup/data --profile complete lorcast get-cards --set-id TFC
+    
+    # Custom directories with workspaces (directories override workspace settings)
+    inkcollector --workspace research --output-dir /external/drive/data lorcast get-sets --save-json
+    
+    # Custom directories with config files
+    inkcollector --config project.yaml --output-dir /project/override/data lorcast get-cards --set-id TFC --save-json
+    
+    # Only override one directory
+    inkcollector --output-dir /custom/data lorcast get-cards --set-id TFC --save-json --get-images
+    # → Data: /custom/data/TFC.json
+    # → Images: {workspace.image_output_dir}/lorcast/sets/TFC/crd_*.jpg
+
+File Organization Comparison
+---------------------------
+
+**Default structure (workspace-based):**
+
+.. code-block:: text
+
+    workspace-dir/
+    ├── data/
+    │   └── lorcast/
+    │       ├── sets.json
+    │       └── sets/
+    │           ├── TFC.json
+    │           └── ROF.json
+    └── images/
+        └── lorcast/
+            └── sets/
+                ├── TFC/
+                │   └── [card images]
+                └── ROF/
+                    └── [card images]
+
+**Custom directory structure (full override):**
+
+.. code-block:: text
+
+    /project/
+    ├── data/
+    │   ├── sets.json         # Direct placement
+    │   ├── TFC.json          # Direct placement
+    │   └── ROF.json          # Direct placement
+    └── images/
+        └── [all card images] # Direct placement, no subdirectories
+
 Integration Examples
 ===================
 
