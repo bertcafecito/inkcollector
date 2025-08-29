@@ -205,9 +205,7 @@ class InkcollectorCLI:
         # Apply workspace and profile overrides
         self._apply_args_overrides(args)
 
-        lorcast = LorcastAPI(
-            api_base_url=self.config.api_base_url, api_version=self.config.api_version
-        )
+        lorcast = LorcastAPI()
 
         if args.lorcast_command == "get-sets":
             self._handle_get_sets_command(lorcast, args)

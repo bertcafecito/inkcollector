@@ -20,13 +20,7 @@ Base Configuration
 - **API Version:** ``v0``
 - **Full Base URL:** ``https://api.lorcast.com/v0``
 
-**Customizable via Configuration:**
-
-.. code-block:: yaml
-
-    # Custom API configuration
-    api_base_url: https://api.lorcast.com
-    api_version: v0
+The API configuration is built into the application and uses these default values.
 
 Supported Endpoints
 ==================
@@ -446,20 +440,16 @@ Image Processing
 Extending the Integration
 ========================
 
-Custom API Configurations
--------------------------
+API Configuration
+----------------
 
-You can customize API settings in your configuration:
+The API configuration is built into the application and uses these default endpoints:
 
 .. code-block:: yaml
 
-    # Use different API endpoint (for testing/development)
-    api_base_url: https://test-api.lorcast.com
-    api_version: v1
-
-    # Standard configuration
-    api_base_url: https://api.lorcast.com
-    api_version: v0
+    # Built-in API configuration (not user-configurable):
+    # api_base_url: https://api.lorcast.com
+    # api_version: v0
 
 Adding New Endpoints
 -------------------
@@ -473,7 +463,7 @@ If the Lorcast API adds new endpoints, Inkcollector can be extended:
     # Future implementation example
     def get_deck_info(deck_id):
         """Get deck information from API."""
-        url = f"{api_base_url}/{api_version}/decks/{deck_id}"
+        url = f"https://api.lorcast.com/v0/decks/{deck_id}"
         response = session.get(url, timeout=(10, 30))
         return response.json()
 

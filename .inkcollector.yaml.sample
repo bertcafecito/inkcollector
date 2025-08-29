@@ -5,10 +5,6 @@
 # Default workspace to use when none is specified
 default_workspace: default
 
-# API configuration
-api_base_url: https://api.lorcast.com
-api_version: v0
-
 # Extraction profiles define what data to extract and how
 profiles:
   complete:

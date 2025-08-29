@@ -56,10 +56,6 @@ A complete configuration file has four main sections:
     # Default workspace when none is specified
     default_workspace: default
 
-    # API configuration
-    api_base_url: https://api.lorcast.com
-    api_version: v0
-
     # Extraction profiles define what data to collect
     profiles:
       my-profile:
@@ -286,10 +282,6 @@ Here's a comprehensive configuration for different scenarios:
 
     # Default workspace for most operations
     default_workspace: main
-
-    # API settings (usually don't need to change)
-    api_base_url: https://api.lorcast.com
-    api_version: v0
 
     # Custom profiles for different use cases
     profiles:

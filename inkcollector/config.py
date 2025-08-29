@@ -42,10 +42,6 @@ class InkcollectorConfig:
     # Default settings
     default_workspace: str = "default"
 
-    # API configuration
-    api_base_url: str = "https://api.lorcast.com"
-    api_version: str = "v0"
-
     # Extraction profiles
     profiles: Dict[str, ExtractionProfile] = field(default_factory=dict)
 
@@ -221,8 +217,6 @@ class ConfigManager:
         # Create main config
         config = InkcollectorConfig(
             default_workspace=data.get("default_workspace", "default"),
-            api_base_url=data.get("api_base_url", "https://api.lorcast.com"),
-            api_version=data.get("api_version", "v0"),
             profiles=profiles,
             workspaces=workspaces,
         )
@@ -252,8 +246,6 @@ class ConfigManager:
         """Convert configuration object to dictionary for YAML serialization."""
         data = {
             "default_workspace": config.default_workspace,
-            "api_base_url": config.api_base_url,
-            "api_version": config.api_version,
         }
 
         # Convert profiles

@@ -90,5 +90,5 @@ html_show_copyright = True
 
 # Custom CSS
 html_css_files = [
-    'custom.css',
+    "custom.css",
 ]

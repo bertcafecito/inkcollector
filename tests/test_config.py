@@ -80,8 +80,6 @@ class TestInkcollectorConfig:
         """Test creating config with default values."""
         config = InkcollectorConfig()
         assert config.default_workspace == "default"
-        assert config.api_base_url == "https://api.lorcast.com"
-        assert config.api_version == "v0"
         assert len(config.profiles) == 4  # complete, images-only, data-only, preview
         assert len(config.workspaces) == 1  # default
 
@@ -152,8 +150,6 @@ class TestConfigManager:
         """Test loading config from YAML file."""
         config_data = {
             "default_workspace": "test",
-            "api_base_url": "https://test.api.com",
-            "api_version": "v1",
             "profiles": {
                 "test-profile": {
                     "description": "Test profile",
@@ -182,8 +178,6 @@ class TestConfigManager:
             config = manager.load_config(config_file)
 
             assert config.default_workspace == "test"
-            assert config.api_base_url == "https://test.api.com"
-            assert config.api_version == "v1"
 
             profile = config.get_profile("test-profile")
             assert profile is not None
@@ -217,8 +211,6 @@ class TestConfigManager:
                 saved_data = yaml.safe_load(f)
 
             assert saved_data["default_workspace"] == "default"
-            assert saved_data["api_base_url"] == "https://api.lorcast.com"
-            assert saved_data["api_version"] == "v0"
             assert "profiles" in saved_data
             assert "workspaces" in saved_data
 
