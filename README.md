@@ -60,6 +60,14 @@ pip install inkcollector
 
 ---
 
+## 📚 Documentation
+
+For comprehensive documentation, including detailed usage examples, configuration options, and API reference, visit:
+
+**[https://bertcafecito.github.io/inkcollector/](https://bertcafecito.github.io/inkcollector/)**
+
+---
+
 ## 💖 Support
 
 Love this project? Here's how you can show your support:
