@@ -1,10 +1,12 @@
 import argparse
 import json
 import os
+import yaml
 from typing import Any, Dict, List, Optional
 
 from inkcollector import __version__
 from inkcollector.lorcast import LorcastAPI
+from inkcollector.config import ConfigManager, InkcollectorConfig, ExtractionProfile, WorkspaceConfig
 
 
 class InkcollectorCLI:
@@ -22,8 +24,17 @@ class InkcollectorCLI:
     def __init__(self):
         """Initialize the CLI parser and setup directories."""
         self.parser: Optional[argparse.ArgumentParser] = None
-        self.data_output_dir = self.DATA_OUTPUT_DIR
-        self.image_output_dir = self.IMAGE_OUTPUT_DIR
+        self.config_manager = ConfigManager()
+        self.config: InkcollectorConfig = self.config_manager.load_config()
+        
+        # Use workspace config for output directories
+        workspace = self.config.get_workspace(self.config.default_workspace)
+        if workspace:
+            self.data_output_dir = workspace.data_output_dir
+            self.image_output_dir = workspace.image_output_dir
+        else:
+            self.data_output_dir = self.DATA_OUTPUT_DIR
+            self.image_output_dir = self.IMAGE_OUTPUT_DIR
 
         self._setup_output_directories()
         self._setup_parser()
@@ -59,13 +70,73 @@ class InkcollectorCLI:
             "-v", "--version", action="version", version=f"Inkcollector {__version__}"
         )
 
+        # Add global arguments
+        self.parser.add_argument(
+            "--config", type=str, help="Path to configuration file"
+        )
+        self.parser.add_argument(
+            "--workspace", type=str, help="Workspace name to use"
+        )
+        self.parser.add_argument(
+            "--profile", type=str, help="Extraction profile to use"
+        )
+
         # Create subparsers for commands
         subparsers = self.parser.add_subparsers(
             dest="command", help="Available commands"
         )
 
+        # Add config command
+        self._setup_config_parser(subparsers)
+        
         # Add lorcast command
         self._setup_lorcast_parser(subparsers)
+
+    def _setup_config_parser(self, subparsers: argparse._SubParsersAction) -> None:
+        """Set up the config command parser and its subcommands."""
+        config_parser = subparsers.add_parser(
+            "config", help="Configuration management commands"
+        )
+
+        # Add subcommands for config
+        config_subparsers = config_parser.add_subparsers(
+            dest="config_command", help="Configuration subcommands"
+        )
+
+        # Add init subcommand
+        init_parser = config_subparsers.add_parser(
+            "init", help="Create a sample configuration file"
+        )
+        init_parser.add_argument(
+            "--path", type=str, default=".inkcollector.yaml",
+            help="Path for the configuration file (default: .inkcollector.yaml)"
+        )
+        init_parser.add_argument(
+            "--force", action="store_true",
+            help="Overwrite existing configuration file"
+        )
+
+        # Add show subcommand
+        show_parser = config_subparsers.add_parser(
+            "show", help="Show current configuration"
+        )
+        show_parser.add_argument(
+            "--format", choices=["yaml", "json"], default="yaml",
+            help="Output format (default: yaml)"
+        )
+
+        # Add list subcommand
+        list_parser = config_subparsers.add_parser(
+            "list", help="List available profiles and workspaces"
+        )
+        list_parser.add_argument(
+            "--profiles", action="store_true",
+            help="List available profiles"
+        )
+        list_parser.add_argument(
+            "--workspaces", action="store_true",
+            help="List available workspaces"
+        )
 
     def _setup_lorcast_parser(self, subparsers: argparse._SubParsersAction) -> None:
         """Set up the lorcast command parser and its subcommands."""
@@ -91,7 +162,7 @@ class InkcollectorCLI:
 
         # Add get-cards subcommand
         get_cards_parser = lorcast_subparsers.add_parser(
-            "get-cards", help="Get cards data (under development)"
+            "get-cards", help="Get cards data"
         )
         get_cards_parser.add_argument(
             "--set-id", type=str, required=True, help="ID of the set to get cards from"
@@ -127,7 +198,13 @@ class InkcollectorCLI:
             )
             return
 
-        lorcast = LorcastAPI()
+        # Apply workspace and profile overrides
+        self._apply_args_overrides(args)
+
+        lorcast = LorcastAPI(
+            api_base_url=self.config.api_base_url,
+            api_version=self.config.api_version
+        )
 
         if args.lorcast_command == "get-sets":
             self._handle_get_sets_command(lorcast, args)
@@ -135,6 +212,114 @@ class InkcollectorCLI:
             self._handle_get_cards_command(lorcast, args)
         else:
             print(f"Unknown lorcast subcommand: {args.lorcast_command}")
+
+    def handle_config_command(self, args: argparse.Namespace) -> None:
+        """Handle config command and route to appropriate subcommand handler.
+
+        Args:
+            args: Parsed command line arguments
+        """
+        if not hasattr(args, "config_command") or not args.config_command:
+            print("Use --help to see available config subcommands.")
+            return
+
+        if args.config_command == "init":
+            self._handle_config_init_command(args)
+        elif args.config_command == "show":
+            self._handle_config_show_command(args)
+        elif args.config_command == "list":
+            self._handle_config_list_command(args)
+        else:
+            print(f"Unknown config subcommand: {args.config_command}")
+
+    def _apply_args_overrides(self, args: argparse.Namespace) -> None:
+        """Apply command line overrides for workspace and profile.
+
+        Args:
+            args: Parsed command line arguments
+        """
+        # This method is kept for backward compatibility
+        # Global overrides are now handled in _apply_global_overrides
+        pass
+
+    def _handle_config_init_command(self, args: argparse.Namespace) -> None:
+        """Handle the config init subcommand.
+
+        Args:
+            args: Parsed command line arguments
+        """
+        config_path = args.path
+        
+        if os.path.exists(config_path) and not args.force:
+            print(f"Configuration file already exists at {config_path}")
+            print("Use --force to overwrite")
+            return
+
+        try:
+            self.config_manager.create_sample_config(config_path)
+            print(f"Sample configuration file created at {config_path}")
+        except Exception as e:
+            print(f"Error creating configuration file: {e}")
+
+    def _handle_config_show_command(self, args: argparse.Namespace) -> None:
+        """Handle the config show subcommand.
+
+        Args:
+            args: Parsed command line arguments
+        """
+        if args.format == "json":
+            config_dict = self.config_manager._config_to_dict(self.config)
+            print(json.dumps(config_dict, indent=2))
+        else:  # yaml
+            config_dict = self.config_manager._config_to_dict(self.config)
+            print(yaml.dump(config_dict, default_flow_style=False, sort_keys=False, indent=2))
+
+    def _handle_config_list_command(self, args: argparse.Namespace) -> None:
+        """Handle the config list subcommand.
+
+        Args:
+            args: Parsed command line arguments
+        """
+        if args.profiles or (not args.profiles and not args.workspaces):
+            print("Available Profiles:")
+            for name, profile in self.config.profiles.items():
+                print(f"  {name}: {profile.description}")
+            print()
+
+        if args.workspaces or (not args.profiles and not args.workspaces):
+            print("Available Workspaces:")
+            for name, workspace in self.config.workspaces.items():
+                print(f"  {name}: data='{workspace.data_output_dir}', "
+                      f"images='{workspace.image_output_dir}', "
+                      f"profile='{workspace.default_profile}'")
+
+    def _get_effective_profile(self, args: argparse.Namespace) -> ExtractionProfile:
+        """Get the effective extraction profile based on args and config.
+
+        Args:
+            args: Parsed command line arguments
+
+        Returns:
+            ExtractionProfile to use for the operation
+        """
+        # Use profile from command line if specified
+        if hasattr(args, 'profile') and args.profile:
+            profile = self.config.get_profile(args.profile)
+            if profile:
+                return profile
+            else:
+                print(f"Warning: Profile '{args.profile}' not found, using default")
+
+        # Use workspace default profile
+        workspace_name = getattr(args, 'workspace', self.config.default_workspace)
+        workspace = self.config.get_workspace(workspace_name)
+        if workspace:
+            profile = self.config.get_profile(workspace.default_profile)
+            if profile:
+                return profile
+
+        # Fallback to complete profile
+        return self.config.get_profile('complete') or self.config.profiles['complete']
 
     def _handle_get_sets_command(
         self, lorcast: LorcastAPI, args: argparse.Namespace
@@ -154,10 +339,17 @@ class InkcollectorCLI:
 
         print(f"Found {len(sets)} sets.")
 
-        if args.json:
+        # Get effective profile settings
+        profile = self._get_effective_profile(args)
+        
+        # Apply profile settings, with command line overrides
+        should_print = args.json if hasattr(args, 'json') and args.json else profile.print_json
+        should_save = args.save_json if hasattr(args, 'save_json') and args.save_json else (profile.save_json and profile.extract_data)
+
+        if should_print:
             self._print_sets_json(sets)
 
-        if args.save_json:
+        if should_save:
             self._save_sets_to_file(sets)
 
     def _handle_get_cards_command(
@@ -180,14 +372,30 @@ class InkcollectorCLI:
 
         print(f"Found {len(cards)} cards for set id {set_id}.")
 
-        if args.json:
+        # Get effective profile settings
+        profile = self._get_effective_profile(args)
+        
+        # Apply profile settings, with command line overrides
+        should_print = args.json if hasattr(args, 'json') and args.json else profile.print_json
+        should_save = args.save_json if hasattr(args, 'save_json') and args.save_json else (profile.save_json and profile.extract_data)
+        should_download_images = args.get_images is not None or (profile.extract_images and not hasattr(args, 'get_images'))
+        
+        # Determine image size
+        if hasattr(args, 'get_images') and args.get_images:
+            image_size = args.get_images
+        elif profile.extract_images:
+            image_size = profile.image_size
+        else:
+            image_size = "normal"
+
+        if should_print:
             self._print_cards_json(cards, set_id)
 
-        if args.save_json:
+        if should_save:
             self._save_cards_to_file(cards, set_id)
 
-        if args.get_images:
-            self._download_card_images(lorcast, cards, set_id, args.get_images)
+        if should_download_images:
+            self._download_card_images(lorcast, cards, set_id, image_size)
 
     def _print_sets_json(self, sets: List[Dict[str, Any]]) -> None:
         """Print sets data as formatted JSON.
@@ -344,12 +552,43 @@ class InkcollectorCLI:
         """Parse arguments and execute the appropriate command."""
         args = self.parser.parse_args()
 
+        # Apply global overrides before executing commands
+        self._apply_global_overrides(args)
+
         # Handle commands
         if args.command == "lorcast":
             self.handle_lorcast_command(args)
+        elif args.command == "config":
+            self.handle_config_command(args)
         else:
             # If no command is provided, show help
             self.parser.print_help()
+
+    def _apply_global_overrides(self, args: argparse.Namespace) -> None:
+        """Apply global overrides like config file, workspace, etc.
+
+        Args:
+            args: Parsed command line arguments
+        """
+        # Override config file if specified
+        if hasattr(args, 'config') and args.config:
+            self.config = self.config_manager.load_config(args.config)
+            # Update workspace settings after config reload
+            workspace = self.config.get_workspace(self.config.default_workspace)
+            if workspace:
+                self.data_output_dir = workspace.data_output_dir
+                self.image_output_dir = workspace.image_output_dir
+                self._setup_output_directories()
+
+        # Override workspace if specified
+        if hasattr(args, 'workspace') and args.workspace:
+            workspace = self.config.get_workspace(args.workspace)
+            if workspace:
+                self.data_output_dir = workspace.data_output_dir
+                self.image_output_dir = workspace.image_output_dir
+                self._setup_output_directories()
+            else:
+                print(f"Warning: Workspace '{args.workspace}' not found in configuration")
 
 
 def main() -> None:

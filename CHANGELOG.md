@@ -7,6 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Configuration File Support**: Added comprehensive YAML configuration file support with `.inkcollector.yaml` files
+  - Automatic discovery in current and parent directories
+  - Custom config file paths via `--config` command line option
+  - Configuration validation and error handling
+- **Extraction Profiles**: Implemented predefined and custom extraction profiles
+  - `complete`: Extract all data and images (default)
+  - `images-only`: Extract only card images
+  - `data-only`: Extract only JSON data
+  - `preview`: Show data in console without saving
+  - `high-quality`: Extract everything with large images
+  - Support for user-defined custom profiles
+- **Workspace Configurations**: Added workspace system for different environments
+  - Configurable output directories for data and images
+  - Per-workspace default profiles
+  - Support for multiple named workspaces (default, research, collection, etc.)
+- **Configuration Management Commands**: New `config` command with subcommands
+  - `config init`: Create sample configuration files
+  - `config show`: Display current configuration in YAML or JSON format
+  - `config list`: List available profiles and workspaces
+- **Global CLI Options**: Added global command line options
+  - `--config`: Specify custom configuration file path
+  - `--workspace`: Override workspace selection
+  - `--profile`: Override profile selection
+- **Configuration Documentation**: Comprehensive documentation in `docs/CONFIG.md`
+  - Usage examples and best practices
+  - Migration guide from CLI-only usage
+  - Troubleshooting guide
+- **Configuration Tests**: Added comprehensive test suite for configuration system
+  - Unit tests for all configuration classes and functionality
+  - YAML loading and saving tests
+  - Configuration validation tests
+
+### Changed
+- **CLI Architecture**: Enhanced CLI to support configuration-driven behavior
+  - Profile-based data extraction logic
+  - Workspace-aware output directory management
+  - Configuration priority system (CLI args > profile > workspace > defaults)
+- **Lorcast Commands**: Updated to respect profile and workspace settings
+  - Automatic application of profile extraction settings
+  - Command line arguments override profile settings
+  - Workspace-based output directory creation
+
+### Dependencies
+- **PyYAML**: Added PyYAML dependency for YAML configuration file parsing
+
 ## [1.0.0] - 2025-08-28
 
 ### Added

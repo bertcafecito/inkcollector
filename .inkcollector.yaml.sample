@@ -1,0 +1,69 @@
+# Inkcollector Configuration File
+# This file defines default settings, extraction profiles, and workspace configurations
+# for the Inkcollector application.
+
+# Default workspace to use when none is specified
+default_workspace: default
+
+# API configuration
+api_base_url: https://api.lorcast.com
+api_version: v0
+
+# Extraction profiles define what data to extract and how
+profiles:
+  complete:
+    description: Extract all data and images
+    extract_data: true
+    extract_images: true
+    image_size: normal
+    save_json: true
+    print_json: false
+
+  images-only:
+    description: Extract only card images
+    extract_data: false
+    extract_images: true
+    image_size: normal
+    save_json: false
+    print_json: false
+
+  data-only:
+    description: Extract only JSON data
+    extract_data: true
+    extract_images: false
+    image_size: normal
+    save_json: true
+    print_json: false
+
+  preview:
+    description: Show data in console without saving
+    extract_data: true
+    extract_images: false
+    image_size: normal
+    save_json: false
+    print_json: true
+
+  high-quality:
+    description: Extract everything with large images
+    extract_data: true
+    extract_images: true
+    image_size: large
+    save_json: true
+    print_json: false
+
+# Workspace configurations define output directories and default settings
+workspaces:
+  default:
+    data_output_dir: data
+    image_output_dir: images
+    default_profile: complete
+
+  research:
+    data_output_dir: research/data
+    image_output_dir: research/images
+    default_profile: data-only
+
+  collection:
+    data_output_dir: collection/data
+    image_output_dir: collection/images
+    default_profile: high-quality
