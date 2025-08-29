@@ -205,6 +205,34 @@ class InkcollectorCLI:
             "--image-dir", type=str, help="Custom base directory for image storage"
         )
 
+        # Add get-all-sets subcommand
+        get_all_sets_parser = lorcast_subparsers.add_parser(
+            "get-all-sets", help="Get all sets and their cards in a single operation"
+        )
+        get_all_sets_parser.add_argument(
+            "--json", action="store_true", help="Print JSON data in the Console"
+        )
+        get_all_sets_parser.add_argument(
+            "--save-json", action="store_true", help="Save JSON data to a file"
+        )
+        get_all_sets_parser.add_argument(
+            "--get-images",
+            nargs="?",
+            choices=["small", "normal", "large"],
+            const="normal",
+            default=None,
+            help=(
+                "Download card images with specified size "
+                "(choices: small, normal, large; default: normal)"
+            ),
+        )
+        get_all_sets_parser.add_argument(
+            "--output-dir", type=str, help="Custom base directory for data storage"
+        )
+        get_all_sets_parser.add_argument(
+            "--image-dir", type=str, help="Custom base directory for image storage"
+        )
+
     def handle_lorcast_command(self, args: argparse.Namespace) -> None:
         """Handle lorcast command and route to appropriate subcommand handler.
 
@@ -230,6 +258,8 @@ class InkcollectorCLI:
             self._handle_get_sets_command(lorcast, args)
         elif args.lorcast_command == "get-cards":
             self._handle_get_cards_command(lorcast, args)
+        elif args.lorcast_command == "get-all-sets":
+            self._handle_get_all_sets_command(lorcast, args)
         else:
             print(f"Unknown lorcast subcommand: {args.lorcast_command}")
 
@@ -456,6 +486,153 @@ class InkcollectorCLI:
 
         if should_download_images:
             self._download_card_images(lorcast, cards, set_id, image_size)
+
+    def _handle_get_all_sets_command(
+        self, lorcast: LorcastAPI, args: argparse.Namespace
+    ) -> None:
+        """Handle the get-all-sets subcommand.
+
+        Args:
+            lorcast: LorcastAPI instance
+            args: Parsed command line arguments
+        """
+        print("Fetching all sets and their cards...")
+        
+        # First, get all sets
+        sets = lorcast.get_sets()
+        
+        if not sets:
+            print("No sets found.")
+            return
+
+        print(f"Found {len(sets)} sets.")
+
+        # Get effective profile settings
+        profile = self._get_effective_profile(args)
+
+        # Apply profile settings, with command line overrides
+        should_print = (
+            args.json if hasattr(args, "json") and args.json else profile.print_json
+        )
+        should_save = (
+            args.save_json
+            if hasattr(args, "save_json") and args.save_json
+            else (profile.save_json and profile.extract_data)
+        )
+        should_download_images = args.get_images is not None or (
+            profile.extract_images and not hasattr(args, "get_images")
+        )
+
+        # Determine image size
+        if hasattr(args, "get_images") and args.get_images:
+            image_size = args.get_images
+        elif profile.extract_images:
+            image_size = profile.image_size
+        else:
+            image_size = "normal"
+
+        # Save sets data if requested
+        if should_save:
+            self._save_sets_to_file(sets)
+
+        # Print sets data if requested
+        if should_print:
+            self._print_sets_json(sets)
+
+        # Process each set to get cards
+        total_cards = 0
+        successful_image_downloads = 0
+        
+        for i, set_data in enumerate(sets, 1):
+            set_id = set_data.get("id")
+            set_name = set_data.get("name", "Unknown")
+            
+            if not set_id:
+                print(f"Set {i} has no ID, skipping...")
+                continue
+                
+            print(f"\nProcessing set {i}/{len(sets)}: {set_name} (ID: {set_id})")
+            
+            try:
+                # Get cards for this set
+                cards = lorcast.get_cards(set_id)
+                
+                if not cards:
+                    print(f"No cards found for set {set_id}")
+                    continue
+                    
+                print(f"Found {len(cards)} cards for set {set_id}")
+                total_cards += len(cards)
+
+                # Print cards data if requested
+                if should_print:
+                    self._print_cards_json(cards, set_id)
+
+                # Save cards data if requested
+                if should_save:
+                    self._save_cards_to_file(cards, set_id)
+
+                # Download images if requested
+                if should_download_images:
+                    print(f"Downloading images for set {set_id}...")
+                    set_successful_downloads = self._download_card_images_bulk(
+                        lorcast, cards, set_id, image_size
+                    )
+                    successful_image_downloads += set_successful_downloads
+
+            except Exception as e:
+                print(f"Error processing set {set_id}: {e}")
+                continue
+
+        print(f"\n{'=' * 60}")
+        print(f"{'BULK EXTRACTION COMPLETE':^60}")
+        print(f"{'=' * 60}")
+        print(f"Processed {len(sets)} sets")
+        print(f"Total cards extracted: {total_cards}")
+        
+        if should_download_images:
+            print(f"Total images downloaded: {successful_image_downloads}")
+
+    def _download_card_images_bulk(
+        self,
+        lorcast: LorcastAPI,
+        cards: List[Dict[str, Any]],
+        set_id: str,
+        image_size: str = "normal",
+    ) -> int:
+        """Download images for all cards in a set (bulk version with progress).
+
+        Args:
+            lorcast: LorcastAPI instance
+            cards: List of card data dictionaries
+            set_id: ID of the set
+            image_size: Size of the image to download ('small', 'normal', 'large')
+            
+        Returns:
+            Number of successful downloads
+        """
+        if self.using_custom_image_dir:
+            # Full override: save directly to custom directory without subdirectories
+            output_path = self.image_output_dir
+        else:
+            # Default behavior: use lorcast subdirectory structure
+            output_path = os.path.join(
+                self.image_output_dir, self.LORCAST_DATASOURCE_DIR, "sets", set_id
+            )
+            self._create_directory_if_not_exists(output_path)
+
+        successful_downloads = 0
+
+        for i, card in enumerate(cards, 1):
+            print(f"  Downloading image {i}/{len(cards)}...", end=" ")
+            if self._download_single_card_image(lorcast, card, output_path, image_size):
+                successful_downloads += 1
+                print("✓")
+            else:
+                print("✗")
+
+        print(f"  Successfully downloaded {successful_downloads}/{len(cards)} images")
+        return successful_downloads
 
     def _print_sets_json(self, sets: List[Dict[str, Any]]) -> None:
         """Print sets data as formatted JSON.
